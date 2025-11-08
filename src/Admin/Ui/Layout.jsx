@@ -244,7 +244,7 @@ const Layout = () => {
                       <span data-key="t-dashboards">Sản phẩm</span>
                     </Link>
                   </li>
-                  <li className="nav-item">
+                  {/* <li className="nav-item">
                     <Link
                       to="/order"
                       className={`nav-link menu-link ${thirdPathSegment == "Order" ? "active" : ""}`}
@@ -258,7 +258,7 @@ const Layout = () => {
                       />
                       <span data-key="t-layouts">Đơn hàng</span>
                     </Link>
-                  </li>
+                  </li> */}
                   <li className="nav-item">
                     <Link
                       to="/categories"
@@ -268,7 +268,7 @@ const Layout = () => {
                       <span data-key="t-dashboards">Danh mục</span>
                     </Link>
                   </li>
-                  <li className="nav-item">
+                  {/* <li className="nav-item">
                     <Link
                       to="customers"
                       className={`nav-link menu-link ${thirdPathSegment == "Customers" ? "active" : ""}`}
@@ -287,7 +287,7 @@ const Layout = () => {
                       <i className="ri-pages-line" />
                       <span>Profile</span>
                     </Link>
-                  </li>
+                  </li> */}
                 </ul>
               </div>
               {/* Sidebar */}

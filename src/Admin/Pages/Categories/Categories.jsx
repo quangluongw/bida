@@ -48,6 +48,7 @@ const Categories = () => {
   const handleOk = () => {
     mutate(idDelete);
     setIdDelete("");
+    setIsModalOpen(false)
   };
 
   const handleCancelDetail = () => {

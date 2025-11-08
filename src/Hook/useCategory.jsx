@@ -29,12 +29,12 @@ const useUpdateCategory = (setIsModalOpenUpdate) => {
   return { mutate, isLoading };
 };
 
-const useForcedeleteCategory = () => {
+const useDeleteCategory = () => {
   const queryClient = useQueryClient();
   const { mutate, isLoading } = useMutation({
     mutationFn: (id) => categoryForcedelete(id),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["categoryTrashed"] });
+      queryClient.invalidateQueries({ queryKey: ["category"] });
       message.success(data.message);
     },
     onError: (error) => {
@@ -59,9 +59,4 @@ const useAddCategory = (setIsModalOpenAdd) => {
   return { mutate, isLoading };
 };
 
-export {
-  useAddCategory,
-  useCategory,
-  useForcedeleteCategory,
-  useUpdateCategory,
-};
+export { useAddCategory, useCategory, useDeleteCategory, useUpdateCategory };

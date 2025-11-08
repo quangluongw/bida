@@ -88,7 +88,7 @@ export const getUserToken = async () => {
   return res.data.user;
 };
 export const categoryForcedelete = async (id) => {
-  const res = await Axios.delete(`api/categories/force-delete/${id}`);
+  const res = await Axios.delete(`/category/${id}`);
   return res.data;
 };
 export const user = async (page, filter = {}) => {

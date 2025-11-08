@@ -13,107 +13,104 @@ export function NumberOrder({ chart }) {
     return statusMapping[status] || "Status Unknown";
   };
 
-  const dates = chart.dates;
-  const ordersByStatus = chart.orders_by_status;
-  const dailyTotal = chart.daily_total;
+  // Lấy dữ liệu từ chart.orderNumber (format mới từ API)
+  const orderNumberData = chart?.orderNumber || [];
 
-  // Generate series for each status
-  const statusSeries = Object.entries(ordersByStatus).map(
-    ([status, values]) => ({
-      name: `${getOrderStatus(status)}`,
+  // Tạo mảng dates và counts từ dữ liệu mới
+  const dates = orderNumberData.map((item) => item.date);
+  const counts = orderNumberData.map((item) => item.count);
+
+  // Series cho biểu đồ - chỉ hiển thị tổng số đơn hàng theo ngày
+  const series = [
+    {
+      name: "Số đơn hàng",
       type: "line",
-      data: dates.map((date) => Number(values[date] || 0)),
-      customStatus: Number(status), // add this to help with styling
-    })
-  );
-
-  // Add the total series as a column
-  const totalSeries = {
-    name: "Tổng số đơn",
-    type: "column",
-    data: dates.map((date) => Number(dailyTotal[date] || 0)),
-  };
-
-  const series = [...statusSeries, totalSeries];
-
-  // Build dashArray based on customStatus (status = 6 -> dashed)
-  const strokeDashArray = series.map(
-    (s) => (s.customStatus === 6 ? 5 : 0) // 5 = dashed line, 0 = solid line
-  );
+      data: counts,
+    },
+    {
+      name: "Tổng số đơn",
+      type: "column",
+      data: counts,
+    },
+  ];
 
   const options = {
     chart: {
       type: "line",
       stacked: false,
+      toolbar: {
+        show: true,
+      },
     },
     stroke: {
-      width: series.map((s) => (s.type === "column" ? 3 : 2)),
+      width: [2, 0],
       curve: "smooth",
-      dashArray: series.map(
-        (s) => (s.customStatus === 6 ? 5 : 0) // Nét đứt nếu là trạng thái 6, ngược lại nét liền
-      ),
     },
-
     plotOptions: {
       bar: {
         columnWidth: "40%",
       },
     },
-    colors: [
-      "#3B82F6",
-      "#10B981",
-      "#F59E0B",
-      "#EC4899",
-      "#8B5CF6",
-      "#EF4444",
-      "#14B8A6",
-    ],
+    colors: ["#3B82F6", "#14B8A6"],
     xaxis: {
       categories: dates,
-    },
-    yaxis: [
-      {
-        title: {
-          text: "Order Number",
-        },
+      title: {
+        text: "Ngày",
       },
-    ],
+    },
+    yaxis: {
+      title: {
+        text: "Số lượng đơn hàng",
+      },
+      min: 0,
+    },
     tooltip: {
       shared: true,
       intersect: false,
+      y: {
+        formatter: (val) => `${val} đơn`,
+      },
     },
     legend: {
       position: "bottom",
+    },
+    dataLabels: {
+      enabled: false,
     },
   };
 
   return <Chart options={options} series={series} height={400} type="line" />;
 }
+
 export function TotalOrder({ chart }) {
-  const dates = chart.dates;
-  const revenueData = chart.revenue_data || {};
+  // Lấy dữ liệu từ chart.revenue (format mới từ API)
+  const revenueChartData = chart?.revenue || [];
 
-  const revenueSeries = {
-    name: "Doanh thu (VNĐ)",
-    type: "column",
-    data: dates.map((date) => Number(revenueData[date] || 0)),
-  };
+  // Tạo mảng dates và revenue từ dữ liệu mới
+  const dates = revenueChartData.map((item) => item.date);
+  const revenues = revenueChartData.map((item) => Number(item.revenue || 0));
 
-  const series = [revenueSeries];
+  const series = [
+    {
+      name: "Doanh thu (VNĐ)",
+      type: "column",
+      data: revenues,
+    },
+  ];
 
   const options = {
     chart: {
       type: "bar",
       stacked: false,
+      toolbar: {
+        show: true,
+      },
     },
     plotOptions: {
       bar: {
-        columnWidth: "40%",
+        columnWidth: "50%",
         dataLabels: {
-          position: "center",
-          style: {
-            colors: ["white"], // Cũng có thể dùng 'white' thay cho mã hex
-          },
+          position: "top",
         },
       },
     },
@@ -123,31 +120,35 @@ export function TotalOrder({ chart }) {
         new Intl.NumberFormat("vi-VN", {
           style: "currency",
           currency: "VND",
+          maximumFractionDigits: 0,
         }).format(val),
-      offsetY: -10, // khoảng cách với đầu cột
+      offsetY: -20,
       style: {
-        fontSize: "12px",
-        colors: ["#000"], // màu chữ
+        fontSize: "11px",
+        colors: ["#304758"],
+        fontWeight: "bold",
       },
     },
     colors: ["#03A9F4"],
     xaxis: {
       categories: dates,
-    },
-    yaxis: [
-      {
-        title: {
-          text: "Doanh thu (VNĐ)",
-        },
-        labels: {
-          formatter: (val) =>
-            new Intl.NumberFormat("vi-VN", {
-              style: "currency",
-              currency: "VND",
-            }).format(val),
-        },
+      title: {
+        text: "Ngày",
       },
-    ],
+    },
+    yaxis: {
+      title: {
+        text: "Doanh thu (VNĐ)",
+      },
+      labels: {
+        formatter: (val) =>
+          new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+            maximumFractionDigits: 0,
+          }).format(val),
+      },
+    },
     tooltip: {
       y: {
         formatter: (val) =>
@@ -159,6 +160,9 @@ export function TotalOrder({ chart }) {
     },
     legend: {
       position: "bottom",
+    },
+    grid: {
+      borderColor: "#f1f1f1",
     },
   };
 

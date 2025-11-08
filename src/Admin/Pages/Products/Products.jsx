@@ -86,7 +86,7 @@ const Products = () => {
                   <form>
                     <div className="row g-3">
                       <div className="col-xxl-5 col-sm-5">
-                        <div className="search-box">
+                        {/* <div className="search-box">
                           <input
                             type="text"
                             className="form-control search"
@@ -94,7 +94,7 @@ const Products = () => {
                             onKeyDown={(e) => handleSearch(e)}
                           />
                           <i className="ri-search-line search-icon" />
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                     {/*end row*/}
@@ -154,7 +154,7 @@ const Products = () => {
                             </Link>
                           </td>
 
-                          <td>{item?.caterori.name}</td>
+                          <td>{item?.caterori?.name}</td>
                           <td className="amount">
                             {<FormatPrice price={item.price} />}
                           </td>
