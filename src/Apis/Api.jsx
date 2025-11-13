@@ -97,7 +97,7 @@ export const user = async (page, filter = {}) => {
   if (filter.search) param.append("email", filter.search);
   if (filter.role !== undefined && filter.role !== "")
     param.append("role", filter.role);
-  const res = await Axios.get(`api/users?${param.toString()}`);
+  const res = await Axios.get(`/user?${param.toString()}`);
   return res.data;
 };
 export const detailUser = async () => {
@@ -124,22 +124,22 @@ export const updateUsers = async (id, data) => {
 export const getOrdersAdmin = async (page, filters = {}) => {
   const params = new URLSearchParams({
     page,
-    ...(filters.search && { keyword: filters.search }),
+    ...(filters.search && { search: filters.search }),
     ...(filters.statusOrder && { status: filters.statusOrder }),
-    ...(filters.paymen && { payment_method: filters.paymen }),
+    ...(filters.paymen && { payment: filters.paymen }),
   });
-  const res = await Axios.get(`/api/orders/?${params.toString()}`);
+  const res = await Axios.get(`/orders/?${params.toString()}`);
   return res.data;
 };
 
 export const udateStatusOrder = async (id, data) => {
-  const res = await Axios.post(`api/orders/status/${id}`, {
+  const res = await Axios.patch(`order/${id}`, {
     status: data,
   });
   return res.data;
 };
 export const detailOrder = async (id) => {
-  const res = await Axios.get(`api/order-details/${id}`);
+  const res = await Axios.get(`/order/${id}`);
   return res.data;
 };
 export const getOrders = async (id) => {

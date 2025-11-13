@@ -50,7 +50,6 @@ const Customers = () => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm();
   const onSubmit = (data) => {
@@ -77,7 +76,7 @@ const Customers = () => {
       <div className="col-lg-12">
         <div className="card" id="customerList">
           <div className="card-body border-bottom-dashed border-bottom">
-            <form>
+            {/* <form>
               <div className="row g-3">
                 <div className="col-xl-6">
                   <div className="search-box">
@@ -92,10 +91,8 @@ const Customers = () => {
                     <i className="ri-search-line search-icon" />
                   </div>
                 </div>
-                {/*end col*/}
                 <div className="col-xl-6">
                   <div className="row g-3">
-                    {/*end col*/}
                     <div className="col-sm-4">
                       <div>
                         <select
@@ -111,7 +108,6 @@ const Customers = () => {
                         </select>
                       </div>
                     </div>
-                    {/*end col*/}
                     <div className="col-sm-4">
                       <div>
                         <button
@@ -143,12 +139,10 @@ const Customers = () => {
                         </button>
                       </div>
                     </div>
-                    {/*end col*/}
                   </div>
                 </div>
               </div>
-              {/*end row*/}
-            </form>
+            </form> */}
           </div>
           <div className="card-body">
             <div>
@@ -159,18 +153,18 @@ const Customers = () => {
                       <th scope="col" style={{ width: 50 }}>
                         #
                       </th>
-                      <th>Customer</th>
+                      <th>Tên</th>
                       <th>Email</th>
-                      <th>Phone</th>
-                      <th>Joining Date</th>
-                      <th>Status</th>
-                      <th>Role</th>
-                      <th>Action</th>
+                      <th>Số điện thoại</th>
+                      <th>Ngày tạo tài khoản</th>
+                      <th>Trạng thái</th>
+                      <th>Vai trò</th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody className="list form-check-all">
                     {data?.data?.map((item, index) => (
-                      <tr key={item.id}>
+                      <tr key={item._id}>
                         <th scope="row">{index + 1}</th>
                         <td className="id" style={{ display: "none" }}>
                           <Link to="#" className="fw-medium link-primary">
@@ -178,16 +172,16 @@ const Customers = () => {
                           </Link>
                         </td>
                         <td className="customer_name"> {item.name}</td>
-                        <td className="email">{item.email}</td>
+                        <td className="email">{item.username}</td>
                         <td className="phone">{item.phone}</td>
                         <td className="date">
-                          {FormatDate({ date: item.created_at })}
+                          {FormatDate({ date: item.createdAt })}
                         </td>
                         <td className="status">
                           <span
-                            className={`badge ${item.is_active === true ? "bg-success-subtle text-success" : "bg-red-500 "}   text-uppercase`}
+                            className={`badge ${item.active === true ? "bg-success-subtle text-success" : "bg-red-500 "}   text-uppercase`}
                           >
-                            {item.is_active === true ? "Active" : "Block"}
+                            {item.active === true ? "Hoạt động" : "Khóa"}
                           </span>
                         </td>
                         <td className="role">
@@ -198,7 +192,7 @@ const Customers = () => {
                         <td className="text-center">
                           <li
                             className="list-inline-item edit"
-                            onClick={() => showModal(item.id, item.role)}
+                            onClick={() => showModal(item._id, item.role)}
                           >
                             <div className="text-primary d-inline-block edit-item-btn">
                               <i className="ri-pencil-fill fs-16" />
@@ -229,9 +223,9 @@ const Customers = () => {
                 <Pagination
                   showSizeChanger
                   onChange={onShowSizeChange}
-                  current={data.current_page}
-                  total={data.total}
-                  pageSize={data.per_page}
+                  current={data.currentPage}
+                  total={data.totalPages}
+                  pageSize={data.itemsPerPage}
                   align="center"
                 />
               </div>

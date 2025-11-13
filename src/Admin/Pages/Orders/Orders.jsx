@@ -1,81 +1,46 @@
-import { Empty, Modal, Pagination, Spin } from "antd";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Empty, Pagination, Spin } from "antd";
+import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FormatDate, FormatDateTime, FormatPrice } from "../../../Format";
-import { useOrder, useStatusOrder } from "../../../Hook/useOrder";
+import { useOrder } from "../../../Hook/useOrder";
 
 const Orders = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get("page")) || 1;
-  const [search, setSearch] = useState("");
-  const [statusOrder, setstatusOrder] = useState("");
-  const [paymen, setPaymen] = useState("");
-  const [filters, setFilters] = useState({});
-  const { data, isLoading } = useOrder(page, filters);
-  const [isOpen, setIsOpen] = useState(false);
-  const [idOpen, setIdOpen] = useState("");
-  const [status, setStatus] = useState();
-  const { isLoading: isLoadingorder, mutate } = useStatusOrder(page);
-  const {
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-  const handleOpen = (id) => {
-    setIdOpen(id);
-    setStatus(id.status);
-    setIsOpen(true);
-  };
-  const handleCancel = (id) => {
-    setIdOpen("");
-    setIsOpen(false);
-  };
-  const onSubmitUpdate = () => {
-    mutate({ id: idOpen.id, data: status });
-
-    setIdOpen("");
-    setIsOpen(false);
-  };
-  const getOrderStatus = (status) => {
-    const statusMapping = {
-      1: "Pending",
-      2: "Processing",
-      3: "Shipping",
-      4: "Delivered",
-      5: "Completed",
-      6: "Cancelled",
-    };
-
-    return statusMapping[status] || "Status Unknown";
-  };
-  const onShowSizeChange = (current, pageSize) => {
+  // const [search, setSearch] = useState("");
+  // const [statusOrder, setstatusOrder] = useState("");
+  // const [paymen, setPaymen] = useState("");
+  // const [filters, setFilters] = useState({});
+  const { data, isLoading } = useOrder(page);
+  // const handleOpen = (id) => {
+  //   setIdOpen(id);
+  //   setStatus(id.status);
+  //   setIsOpen(true);
+  // };
+  const onShowSizeChange = (current) => {
     const searchParams = new URLSearchParams(location.search);
     searchParams.set("page", current);
     navigate(`${location.pathname}?${searchParams.toString()}`);
   };
   const getOrderStatusColor = (status) => {
     const statusMapping = {
-      1: "#FFC107",
-      2: "#FF9800",
-      3: "#2196F3",
-      4: "#4CAF50",
-      5: "#2E7D32",
-      6: "#9E9E9E",
-      7: "#9C27B0",
-      8: "#F44336",
+      "Xác nhận": "#FFC107",
+      "Đang giao hàng": "#2196F3",
+      "Thành công": "#2E7D32",
+      "Hủy": "#F44336",
     };
 
-    return statusMapping[status] || "Status Unknown";
+    return statusMapping[status] || "#9E9E9E"; // Màu mặc định nếu không tìm thấy
   };
-  const handleFilter = () => {
-    setFilters({
-      search,
-      statusOrder,
-      paymen,
-    });
-  };
+  // const handleFilter = () => {
+  //   setFilters({
+  //     search,
+  //     statusOrder,
+  //     paymen,
+  //   });
+  // };
   if (isLoading) {
     return (
       <Spin
@@ -89,7 +54,7 @@ const Orders = () => {
       <div className="col-lg-12">
         <div className="card" id="orderList">
           <div className="card-body border border-dashed border-end-0 border-start-0">
-            <form>
+            {/* <form>
               <div className="row g-3">
                 <div className="col-xxl-5 col-sm-5">
                   <div className="search-box">
@@ -112,20 +77,18 @@ const Orders = () => {
                       value={statusOrder}
                       onChange={(e) => setstatusOrder(e.target.value)}
                     >
-                      <option value="">Status</option>
+                      <option value="">Trang thái đơn hàng</option>
                       <option value="" selected="">
                         All
                       </option>
-                      <option value="1">Pending</option>
-                      <option value="2">Processing</option>
-                      <option value="3">Shipping</option>
-                      <option value="4">Delivered</option>
-                      <option value="5">Completed</option>
-                      <option value="6">Cancelled</option>
+                      <option value="1">Xác nhận</option>
+                      <option value="2">Đang Giao Hàng</option>
+                      <option value="3">Thành công</option>
+                      <option value="3">Hủy</option>
                     </select>
                   </div>
                 </div>
-                {/*end col*/}
+           
                 <div className="col-xxl-3 col-sm-2">
                   <div>
                     <select
@@ -155,8 +118,8 @@ const Orders = () => {
                   </div>
                 </div>
               </div>
-              {/*end row*/}
-            </form>
+         
+            </form> */}
           </div>
           {data?.data.length > 0 ? (
             <div className="card-body pt-0">
@@ -171,32 +134,20 @@ const Orders = () => {
                         <th scope="col" style={{ width: 25 }}>
                           <div className="form-check">#</div>
                         </th>
-                        <th className="sort" data-sort="id">
-                          Order ID
+                        <th data-sort="id">Mã đh</th>
+                        <th data-sort="customer_name">Tên người mua</th>
+                        <th data-sort="date">Thời gian mua</th>
+                        <th data-sort="amount">Tổng tiền</th>
+                        <th data-sort="payment">
+                          Phương thức thanh toán
                         </th>
-                        <th className="sort" data-sort="customer_name">
-                          Customer
-                        </th>
-                        <th className="sort" data-sort="date">
-                          Order Date
-                        </th>
-                        <th className="sort" data-sort="amount">
-                          Amount
-                        </th>
-                        <th className="sort text-center" data-sort="payment">
-                          Payment Method
-                        </th>
-                        <th className="sort" data-sort="status">
-                          Delivery Status
-                        </th>
-                        <th className="sort" data-sort="city">
-                          Action
-                        </th>
+                        <th data-sort="status">Trạng thái đơn hàng</th>
+                        <th data-sort="city"></th>
                       </tr>
                     </thead>
                     <tbody className="list form-check-all">
                       {data?.data.map((order, index) => (
-                        <tr key={order.id}>
+                        <tr key={order._id}>
                           <th scope="row">
                             <div className="form-check">{index + 1}</div>
                           </th>
@@ -205,22 +156,24 @@ const Orders = () => {
                               href="apps-ecommerce-order-details.html"
                               className="fw-medium link-primary"
                             >
-                              {order.order_code}
+                              {order.madh}
                             </a>
                           </td>
-                          <td className="customer_name">{order.user_name}</td>
+                          <td className="customer_name">
+                            {order.customerName}
+                          </td>
 
                           <td className="date">
-                            {<FormatDate date={order.created_at} />}
+                            {<FormatDate date={order.createdAt} />}
                             <small className="text-muted">
-                              {<FormatDateTime dateString={order.created_at} />}
+                              {<FormatDateTime dateString={order.createdAt} />}
                             </small>
                           </td>
                           <td className="amount">
-                            {<FormatPrice price={order.total_amount} />}
+                            {<FormatPrice price={order.totalPrice} />}
                           </td>
-                          <td className="payment text-center">
-                            {order.payment_method}
+                          <td className="payment">
+                            {order.payment}
                           </td>
                           <td className="status">
                             <span
@@ -231,26 +184,18 @@ const Orders = () => {
                                 ),
                               }}
                             >
-                              {getOrderStatus(order.status)}
+                              {order.status}
                             </span>
                           </td>
                           <td>
                             <ul className="list-inline hstack gap-2 mb-0">
                               <li className="list-inline-item" title="View">
                                 <Link
-                                  to={`/order_detail/${order.id}`}
+                                  to={`/order_detail/${order._id}`}
                                   className="text-primary d-inline-block"
                                 >
                                   <i className="ri-eye-fill fs-16" />
                                 </Link>
-                              </li>
-                              <li
-                                className="list-inline-item edit"
-                                onClick={() => handleOpen(order)}
-                              >
-                                <div className="text-primary d-inline-block edit-item-btn">
-                                  <i className="ri-pencil-fill fs-16" />
-                                </div>
                               </li>
                             </ul>
                           </td>
@@ -534,38 +479,7 @@ const Orders = () => {
           )}
         </div>
       </div>
-      <Modal
-        open={isOpen}
-        onOk={handleSubmit(onSubmitUpdate)}
-        onCancel={handleCancel}
-        title="Order status"
-        width={800}
-        // className="modal fade zoomIn"
-      >
-        <>
-          <div className="radio-inputs-order my-6">
-            {[
-              { label: "Pending", value: 1 },
-              { label: "Processing", value: 2 },
-              { label: "Shipping", value: 3 },
-              { label: "Delivered", value: 4 },
-              { label: "Completed", value: 5 },
-              { label: "Cancelled", value: 6 },
-            ].map((item) => (
-              <label className="radio" key={item.value}>
-                <input
-                  type="radio"
-                  name="radio"
-                  value={item.value}
-                  checked={status === item.value}
-                  onChange={() => setStatus(item.value)}
-                />
-                <span className="name">{item.label}</span>
-              </label>
-            ))}
-          </div>
-        </>
-      </Modal>
+
       {/*end col*/}
     </div>
   );

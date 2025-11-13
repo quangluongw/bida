@@ -1,9 +1,8 @@
 import { Modal, Spin } from "antd";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { FormatDate, FormatDateTime, FormatPrice } from "../../../Format";
-import { useDetailUserId } from "../../../Hook/useDetailUser";
 import { UseDetailOrder, useStatusOrderAdmin } from "../../../Hook/useOrder";
 const Order_Detail = () => {
   const { id } = useParams();
@@ -13,15 +12,7 @@ const Order_Detail = () => {
   const { data, isLoading } = UseDetailOrder(id);
   const [idOpen, setIdOpen] = useState("");
   const [status, setStatus] = useState();
-  const { data: user, isLoading: isLoadingUser } = useDetailUserId(
-    data?.[0]?.order?.user_id
-  );
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm();
+  const { handleSubmit } = useForm();
   const onSubmitUpdate = () => {
     mutate({ id: idOpen, data: status });
     if (!isLoadingorder) {
@@ -29,34 +20,23 @@ const Order_Detail = () => {
       setIsOpen(false);
     }
   };
-  const handleCancel = (id) => {
+  const handleCancel = () => {
     setIdOpen("");
     setIsOpen(false);
     setIsOpenOrder(false);
   };
 
   const handleOpen = (id) => {
-    setIdOpen(id[0].order.id);
-    setStatus(id[0].order.status);
+    setIdOpen(id._id);
+    setStatus(id.status);
     setIsOpen(true);
   };
   const handleCancelOrder = (id, status) => {
-    setIdOpen(id[0].order.id);
+    setIdOpen(id.id);
     setStatus(status);
     setIsOpenOrder(true);
   };
-  const getOrderStatus = (status) => {
-    const statusMapping = {
-      1: "Pending",
-      2: "Processing",
-      3: "Shipping",
-      4: "Delivered",
-      5: "Completed",
-      6: "Cancelled",
-    };
-    return statusMapping[status] || "Status Unknown";
-  };
-  if (isLoading || isLoadingUser) {
+  if (isLoading) {
     return (
       <Spin
         size="large"
@@ -64,9 +44,7 @@ const Order_Detail = () => {
       />
     );
   }
-  const total =
-    Number(data?.[0]?.order?.total_amount || 0) +
-    Number(data?.[0]?.order?.voucher?.discount || 0);
+
   return (
     <div>
       <div className="row">
@@ -75,7 +53,7 @@ const Order_Detail = () => {
             <div className="card-header">
               <div className="d-flex align-items-center">
                 <h5 className="card-title flex-grow-1 items-center mb-0 text-uppercase">
-                  Order #{data?.[0]?.order?.order_code || "N/A"}
+                  Order #{data?._id || "N/A"}
                 </h5>
                 <div className="flex-shrink-0">
                   <a
@@ -107,49 +85,38 @@ const Order_Detail = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {data.map((item) => (
+                    {data?.products?.map((item) => (
                       <tr>
                         <td>
                           <div className="d-flex">
                             <div className="flex-shrink-0 avatar-md bg-light rounded p-1">
                               <img
-                                src={item.product_variant?.product?.img_thumb}
+                                src={item.productId.imageUrl}
                                 alt=""
                                 className="img-fluid d-block"
                               />
                             </div>
                             <div className="flex-grow-1 ms-3">
                               <h5 className="fs-15">
-                                <Link
-                                  to={`/product_detail/${item.product_variant.product.id}`}
-                                  className="link-primary"
-                                >
-                                  {item.product_name.length > 20
-                                    ? item.product_name.slice(0, 40) + "..."
-                                    : item.product_name}
-                                </Link>
+                                <div>
+                                  {item.productId.name.length > 20
+                                    ? item.productId.name.slice(0, 40) + "..."
+                                    : item.productId.name}
+                                </div>
                               </h5>
-                              <p className="text-muted mb-0">
-                                Color:{" "}
-                                <span className="fw-medium">
-                                  {item.color_name}
-                                </span>
-                              </p>
-                              <p className="text-muted mb-0">
-                                Size:{" "}
-                                <span className="fw-medium">
-                                  {item.size_name}
-                                </span>
-                              </p>
                             </div>
                           </div>
                         </td>
                         <td className="text-center">
-                          {<FormatPrice price={item.price} />}
+                          {<FormatPrice price={item.productId.price} />}
                         </td>
                         <td className="text-center">{item.quantity}</td>
                         <td className="fw-medium text-end">
-                          {<FormatPrice price={item.price * item.quantity} />}
+                          {
+                            <FormatPrice
+                              price={item.productId.price * item.quantity}
+                            />
+                          }
                         </td>
                       </tr>
                     ))}
@@ -159,45 +126,10 @@ const Order_Detail = () => {
                       <td colSpan={2} className="fw-medium p-0">
                         <table className="table table-borderless mb-0">
                           <tbody>
-                            <tr>
-                              <td>Sub Total :</td>
-                              <td className="text-end">
-                                {<FormatPrice price={total} />}
-                              </td>
-                            </tr>
-                            {data[0]?.order?.voucher !== null ? (
-                              <tr>
-                                <td>
-                                  Discount
-                                  <span className="text-muted mx-1">
-                                    ({data[0]?.order?.voucher?.code})
-                                  </span>
-                                  :
-                                </td>
-                                <td className="text-end">
-                                  {data.voucher === null ? (
-                                    0
-                                  ) : (
-                                    <FormatPrice
-                                      price={data[0]?.order?.voucher?.discount}
-                                    />
-                                  )}
-                                </td>
-                              </tr>
-                            ) : undefined}
-
-                            <tr>
-                              <td>Shipping Charge :</td>
-                              <td className="text-end">30.000 đ</td>
-                            </tr>
                             <tr className="border-top border-top-dashed">
                               <th scope="row">Total :</th>
                               <th className="text-end">
-                                {
-                                  <FormatPrice
-                                    price={data[0].order.total_amount + 30000}
-                                  />
-                                }
+                                {<FormatPrice price={data.totalPrice} />}
                               </th>
                             </tr>
                           </tbody>
@@ -214,7 +146,7 @@ const Order_Detail = () => {
             <div className="card-header">
               <div className="d-sm-flex align-items-center">
                 <h5 className="card-title flex-grow-1 mb-0">Order Status</h5>
-                {data[0].order.status !== 5 && (
+                {data.status !== "Hủy" && (
                   <div className="flex mt-2 mt-sm-0 gap-2">
                     <div
                       className="px-3 py-1 bg-[#dff0fa] hover:text-white hover:bg-blue-500 cursor-pointer rounded-md btn-sm mt-2 mt-sm-0"
@@ -224,8 +156,7 @@ const Order_Detail = () => {
                       <i className="ri-map-pin-line align-middle me-1" />
                       Order Status
                     </div>
-                    {(data[0].order.status == 1 ||
-                      data[0].order.status == 2) && (
+                    {data.status == "Xác nhận" && (
                       <div
                         className="px-3 py-1 bg-[#fadbd5] hover:text-white  hover:bg-red-500 cursor-pointer rounded-md btn-sm mt-2 mt-sm-0"
                         onClick={() => handleCancelOrder(data, 6)}
@@ -256,16 +187,12 @@ const Order_Detail = () => {
                           </div>
                           <div className="flex-grow-1 ms-3 ">
                             <h6 className="fs-15 mb-0 fw-semibold flex ">
-                              {getOrderStatus(data[0]?.order?.status)}
+                              {data?.status}
                               <span className="fw-normal ml-2 flex gap-1">
-                                {
-                                  <FormatDate
-                                    date={data[0]?.order?.updated_at}
-                                  />
-                                }
+                                {<FormatDate date={data?.updatedAt} />}
                                 {
                                   <FormatDateTime
-                                    dateString={data[0]?.order?.updated_at}
+                                    dateString={data?.updatedAt}
                                   />
                                 }
                               </span>
@@ -293,9 +220,9 @@ const Order_Detail = () => {
             </div>
             <div className="card-body">
               <ul className="list-unstyled vstack gap-2 fs-15 mb-0">
-                <li className="fw-medium fs-14">Name : {user.name}</li>
-                <li>Phone : {data[0].order.user_phone}</li>
-                <li>Address : {data[0].order.user_address}</li>
+                <li className=" fs-14">Name : {data.customerName}</li>
+                <li>Phone : {data.phone}</li>
+                <li>Address : {data.address}</li>
               </ul>
             </div>
           </div>
@@ -306,18 +233,17 @@ const Order_Detail = () => {
         open={isOpen}
         onOk={handleSubmit(onSubmitUpdate)}
         onCancel={handleCancel}
-        title="Order status"
+        title="Trạng thái đơn hàng"
         width={800}
         // className="modal fade zoomIn"
       >
         <>
           <div className="radio-inputs-order my-6">
             {[
-              { label: "Chờ xử lý", value: 1 },
-              { label: "Đang xử lý", value: 2 },
-              { label: "Đang vận chuyển", value: 3 },
-              { label: "Đã giao hàng", value: 4 },
-              { label: "Hoàn thành", value: 5 },
+              { label: "Xác nhận", value: "Xác nhận" },
+              { label: "Đang giao hàng", value: "Đang giao hàng" },
+              { label: "Thành công", value: "Thành công" },
+              { label: "Hủy", value: "Hủy" },
             ].map((item) => (
               <label className="radio" key={item.value}>
                 <input
