@@ -53,7 +53,12 @@ const Customers = () => {
     formState: { errors },
   } = useForm();
   const onSubmit = (data) => {
-    mutate(data);
+    const user = {
+      ...data,
+      "password": "Abcd@123",
+      "role":"admin"
+    };
+    mutate(user);
     setBlock(false);
   };
   const handleFilter = () => {
@@ -76,7 +81,7 @@ const Customers = () => {
       <div className="col-lg-12">
         <div className="card" id="customerList">
           <div className="card-body border-bottom-dashed border-bottom">
-            {/* <form>
+            <form>
               <div className="row g-3">
                 <div className="col-xl-6">
                   <div className="search-box">
@@ -131,18 +136,17 @@ const Customers = () => {
                         <button
                           type="button"
                           className=" text-white text-[0.9rem] bg-[#03A9F4] px-4
-                           py-[0.6rem] rounded-md "
+                           py-[0.4rem] rounded-md "
                           onClick={() => setBlock(true)}
                         >
-                          <i className="ri-add-line align-bottom me-1" /> Add
-                          Customer
+                          <i className="ri-add-line align-bottom " /> Thêm admin
                         </button>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </form> */}
+            </form>
           </div>
           <div className="card-body">
             <div>
@@ -242,7 +246,7 @@ const Customers = () => {
                 <div className="modal-content">
                   <div className="modal-header bg-light p-3">
                     <h5 className="modal-title" id="exampleModalLabel">
-                      Add Customer
+                      Thêm admin
                     </h5>
                     <button
                       type="button"
@@ -260,14 +264,14 @@ const Customers = () => {
                           htmlFor="customername-field"
                           className="form-label"
                         >
-                          Customer Name
+                          Tên
                         </label>
                         <input
                           type="text"
                           id="customername-field"
                           className="form-control"
                           placeholder="Enter name"
-                          {...register("name", { required: true })}
+                          {...register("username", { required: true })}
                         />
                         <div className="text-red-500 mt-1">
                           {errors.name && "Please enter a customer name."}
@@ -293,31 +297,6 @@ const Customers = () => {
                         />
                         <div className="text-red-500 mt-1">
                           {errors.email && errors.email.message}
-                        </div>
-                      </div>
-                      <div className="mb-3">
-                        <label htmlFor="password-field" className="form-label">
-                          Password
-                        </label>
-                        <input
-                          type="text"
-                          id="password-field"
-                          className="form-control"
-                          placeholder="Enter password"
-                          {...register("password", {
-                            required: "Please enter a password.",
-                            minLength: {
-                              value: 8,
-                              message:
-                                "Password must be at least 8 characters long.",
-                            },
-                            validate: (value) =>
-                              /[A-Z]/.test(value) ||
-                              "Password must contain at least one uppercase letter.",
-                          })}
-                        />
-                        <div className="text-red-500 mt-1">
-                          {errors.password && errors.password.message}
                         </div>
                       </div>
                     </div>

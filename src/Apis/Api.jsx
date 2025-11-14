@@ -114,7 +114,7 @@ export const deleteUser = async (id) => {
   return res.data;
 };
 export const addUsers = async (data) => {
-  const res = await Axios.post(`api/users`, data);
+  const res = await Axios.post(`/addUser`, data);
   return res.data;
 };
 export const updateUsers = async (id, data) => {
@@ -142,42 +142,12 @@ export const detailOrder = async (id) => {
   const res = await Axios.get(`/order/${id}`);
   return res.data;
 };
-export const getOrders = async (id) => {
-  const res = await Axios.get(`api/orders/${id}`);
-  return res.data;
-};
-export const addOrderDetail = async (data) => {
-  const res = await Axios.post("api/order-details", data);
-  return res.data;
-};
-export const getOrderbystatus = async (status, userId) => {
-  const res = await Axios.get(`/order/status/${status}/${userId}`);
-  return res.data;
-};
-export const getOrderByUserid = async (userId, filters = {}) => {
-  const params = new URLSearchParams();
-  if (filters.status) params.append("status", filters.status);
-  const res = await Axios.get(
-    `api/orders/byuser/${userId}?${params.toString()}`
-  );
-  return res.data;
-};
-export const updateUser = async (data, id) => {
-  const res = await Axios.put(`api/users/${id}`, data);
-  return res.data;
-};
-export const deleteOrder = async (id) => {
-  const res = await Axios.delete(`api/users/${id}`);
-  return res.data;
-};
+
 export const addProduct = async (data) => {
   const res = await Axios.post(`/products`, data);
   return res.data;
 };
-export const orderUpdate = async (id, data) => {
-  const res = await Axios.put(`api/orders/${id}`, data);
-  return res.data;
-};
+
 export const dashboard = async (startDate, endDate) => {
   try {
     const params = new URLSearchParams();
