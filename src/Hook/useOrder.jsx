@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom";
 import {
   detailOrder,
   getOrdersAdmin,
-  orderUpdate,
   udateStatusOrder,
 } from "../Apis/Api.jsx";
 
@@ -72,7 +71,6 @@ export {
   UseDetailOrder,
   useOrder,
   useOrderUpdate,
-  useStatusOrder,
   useStatusOrderAdmin,
 
 };

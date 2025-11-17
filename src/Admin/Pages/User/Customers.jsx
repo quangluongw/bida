@@ -1,72 +1,69 @@
+import { Pagination, Spin } from "antd";
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useQuery } from "react-query";
-import { user } from "../../../Apis/Api";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Modal, Pagination, Spin } from "antd";
+import { user } from "../../../Apis/Api";
 import { FormatDate } from "../../../Format";
 import { useAddUser, useUpdateUser } from "../../../Hook/useUser";
-import { useForm } from "react-hook-form";
+
 const Customers = () => {
   const { mutate: updateuser } = useUpdateUser();
   const { mutate } = useAddUser();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [id, setId] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get("page")) || 1;
-  const [filter, setfilter] = useState();
-  const [search, setsearch] = useState();
-  const [role, setrole] = useState();
-  const [updaterole, setupdaterole] = useState();
+  const searchQuery = searchParams.get("search") || "";
+  const [searchInput, setSearchInput] = useState(searchQuery); // State cho input
+  const [block, setBlock] = useState(false);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["customers", page, searchQuery],
+    queryFn: () => user(page, searchQuery),
+  });
+
   const onShowSizeChange = (current) => {
     const searchParams = new URLSearchParams(location.search);
     searchParams.set("page", current);
     navigate(`${location.pathname}?${searchParams.toString()}`);
   };
-  const showModal = (id, role) => {
-    setId(id);
-    setupdaterole(role);
-    setIsModalOpen(true);
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-  const [block, setBlock] = useState(false);
-  const { data, isLoading } = useQuery({
-    queryKey: ["customers", page, filter],
-    queryFn: () => user(page, filter),
-  });
-  const handleOk = () => {
+
+  const handleOk = (id, active) => {
     updateuser({
       id,
       data: {
-        role: updaterole,
+        active: active,
       },
     });
-    setIsModalOpen(false);
-    setId("");
   };
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+
   const onSubmit = (data) => {
-    const user = {
+    const userData = {
       ...data,
-      "password": "Abcd@123",
-      "role":"admin"
+      password: "Abcd@123",
+      role: "admin",
     };
-    mutate(user);
+    mutate(userData);
     setBlock(false);
   };
-  const handleFilter = () => {
-    setfilter({
-      search,
-      role,
-    });
+
+  // Hàm xử lý khi submit form search
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set("search", searchInput);
+    console.log(searchInput);
+    searchParams.set("page", "1");
+    navigate(`${location.pathname}?${searchParams.toString()}`);
   };
+
   if (isLoading) {
     return (
       <Spin
@@ -81,65 +78,37 @@ const Customers = () => {
       <div className="col-lg-12">
         <div className="card" id="customerList">
           <div className="card-body border-bottom-dashed border-bottom">
-            <form>
+            <form onSubmit={handleSearchSubmit}>
               <div className="row g-3">
                 <div className="col-xl-6">
                   <div className="search-box">
                     <input
                       type="text"
-                      className="form-control "
-                      placeholder="Search for email"
-                      value={search}
-                      onChange={(e) => setsearch(e.target.value)}
+                      className="form-control"
+                      placeholder="Tìm kiếm theo tên (Nhấn Enter để tìm)"
+                      value={searchInput}
+                      onChange={(e) => setSearchInput(e.target.value)}
                     />
-
                     <i className="ri-search-line search-icon" />
                   </div>
                 </div>
                 <div className="col-xl-6">
                   <div className="row g-3">
-                    <div className="col-sm-4">
-                      <div>
-                        <select
-                          className="form-control"
-                          value={role}
-                          onChange={(e) => setrole(e.target.value)}
-                        >
-                          <option value="" selected="">
-                            All
-                          </option>
-                          <option value="1">Admin</option>
-                          <option value="0">User</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div className="col-sm-4">
-                      <div>
-                        <button
-                          type="button"
-                          className="py-2 bg-[#5671cc] text-white rounded-md btn-primary w-100"
-                          onClick={() => handleFilter()}
-                        >
-                          <i className="ri-equalizer-fill me-2 align-bottom" />
-                          Filters
-                        </button>
-                      </div>
-                    </div>
                     <div className="col-sm-auto">
                       <div className="d-flex flex-wrap align-items-start gap-2">
                         <button
                           className="btn btn-soft-danger"
                           id="remove-actions"
+                          type="button"
                         >
                           <i className="ri-delete-bin-2-line" />
                         </button>
                         <button
                           type="button"
-                          className=" text-white text-[0.9rem] bg-[#03A9F4] px-4
-                           py-[0.4rem] rounded-md "
+                          className="text-white text-[0.9rem] bg-[#03A9F4] px-4 py-[0.4rem] rounded-md"
                           onClick={() => setBlock(true)}
                         >
-                          <i className="ri-add-line align-bottom " /> Thêm admin
+                          <i className="ri-add-line align-bottom" /> Thêm admin
                         </button>
                       </div>
                     </div>
@@ -169,37 +138,51 @@ const Customers = () => {
                   <tbody className="list form-check-all">
                     {data?.data?.map((item, index) => (
                       <tr key={item._id}>
-                        <th scope="row">{index + 1}</th>
+                        <th scope="row">
+                          {(page - 1) * (data?.pagination?.itemsPerPage || 10) +
+                            index +
+                            1}
+                        </th>
                         <td className="id" style={{ display: "none" }}>
                           <Link to="#" className="fw-medium link-primary">
                             #VZ2101
                           </Link>
                         </td>
-                        <td className="customer_name"> {item.name}</td>
-                        <td className="email">{item.username}</td>
-                        <td className="phone">{item.phone}</td>
+                        <td className="customer_name">{item.username}</td>
+                        <td className="email">{item.email}</td>
+                        <td className="phone">
+                          {item.phone ?? "Chưa cập nhật"}
+                        </td>
                         <td className="date">
                           {FormatDate({ date: item.createdAt })}
                         </td>
                         <td className="status">
                           <span
-                            className={`badge ${item.active === true ? "bg-success-subtle text-success" : "bg-red-500 "}   text-uppercase`}
+                            className={`badge ${
+                              item.active === true
+                                ? "bg-success-subtle text-success"
+                                : "bg-red-500"
+                            } text-uppercase`}
                           >
                             {item.active === true ? "Hoạt động" : "Khóa"}
                           </span>
                         </td>
                         <td className="role">
-                          <span className={`text-sm text-uppercase`}>
+                          <span className="text-sm text-uppercase">
                             {item.role == 0 ? "User" : "Admin"}
                           </span>
                         </td>
                         <td className="text-center">
-                          <li
-                            className="list-inline-item edit"
-                            onClick={() => showModal(item._id, item.role)}
-                          >
-                            <div className="text-primary d-inline-block edit-item-btn">
-                              <i className="ri-pencil-fill fs-16" />
+                          <li className="list-inline-item edit">
+                            <div
+                              className="text-primary d-inline-block edit-item-btn cursor-pointer"
+                              onClick={() => handleOk(item._id, !item.active)}
+                            >
+                              {!item.active ? (
+                                <i className="fa-solid fa-eye"></i>
+                              ) : (
+                                <i className="fa-regular fa-eye-slash"></i>
+                              )}
                             </div>
                           </li>
                         </td>
@@ -207,40 +190,36 @@ const Customers = () => {
                     ))}
                   </tbody>
                 </table>
-                <div className="noresult" style={{ display: "none" }}>
-                  <div className="text-center">
-                    <lord-icon
-                      src="https://cdn.lordicon.com/msoeawqm.json"
-                      trigger="loop"
-                      colors="primary:#121331,secondary:#08a88a"
-                      style={{ width: 75, height: 75 }}
-                    />
-                    <h5 className="mt-2">Sorry! No Result Found</h5>
-                    <p className="text-muted mb-0">
-                      We've searched more than 150+ customer We did not find any
-                      customer for you search.
-                    </p>
+                {data?.data?.length === 0 && (
+                  <div className="noresult">
+                    <div className="text-center py-4">
+                      <h5 className="mt-2">Không tìm thấy kết quả</h5>
+                      <p className="text-muted mb-0">
+                        Không tìm thấy người dùng nào phù hợp với tìm kiếm của
+                        bạn.
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
               <div className="d-flex justify-center mb-4">
                 <Pagination
-                  showSizeChanger
                   onChange={onShowSizeChange}
-                  current={data.currentPage}
-                  total={data.totalPages}
-                  pageSize={data.itemsPerPage}
+                  current={data?.pagination?.currentPage || 1}
+                  total={data?.pagination?.totalItems || 0}
+                  pageSize={data?.pagination?.itemsPerPage || 10}
                   align="center"
+                  showSizeChanger={false}
                 />
               </div>
             </div>
 
             <div
-              className={`modal fade  ${block ? "block opacity-100" : ""} `}
+              className={`modal fade ${block ? "block opacity-100" : ""}`}
               style={{ background: "rgba(0, 0, 0, 0.5)" }}
             >
               <div
-                className="modal-dialog modal-dialog-centered "
+                className="modal-dialog modal-dialog-centered"
                 style={{ transform: "none" }}
               >
                 <div className="modal-content">
@@ -274,7 +253,7 @@ const Customers = () => {
                           {...register("username", { required: true })}
                         />
                         <div className="text-red-500 mt-1">
-                          {errors.name && "Please enter a customer name."}
+                          {errors.username && "Please enter a customer name."}
                         </div>
                       </div>
                       <div className="mb-3">
@@ -316,45 +295,15 @@ const Customers = () => {
                         >
                           Add Customer
                         </button>
-                        {/* <button type="button" className="btn btn-success" id="edit-btn">Update</button> */}
                       </div>
                     </div>
                   </form>
                 </div>
               </div>
             </div>
-            <Modal
-              open={isModalOpen}
-              onOk={handleOk}
-              onCancel={handleCancel}
-              // className="modal fade zoomIn"
-            >
-              <div className="modal-dialog modal-dialog-centered">
-                <div className="modal-content border-none">
-                  <div className="radio-inputs-order my-6">
-                    {[
-                      { label: "Admin", value: "1" },
-                      { label: "User", value: "0" },
-                    ].map((item) => (
-                      <label className="radio" key={item.value}>
-                        <input
-                          type="radio"
-                          name="radio"
-                          value={item.value}
-                          checked={updaterole === item.value}
-                          onChange={() => setupdaterole(item.value)}
-                        />
-                        <span className="name">{item.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </Modal>
           </div>
         </div>
       </div>
-      {/*end col*/}
     </div>
   );
 };

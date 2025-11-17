@@ -34,21 +34,6 @@ const Dashboards = () => {
     return `/?${updatedParams.toString()}`;
   };
 
-  const getOrderStatus = (status) => {
-    const statusMapping = {
-      1: "Pending",
-      2: "Processing",
-      3: "Shipping",
-      4: "Delivered",
-      5: "Completed",
-      6: "Cancelled",
-      Success: "Success",
-      Pending: "Pending",
-      Cancelled: "Cancelled",
-    };
-    return statusMapping[status] || "Status Unknown";
-  };
-
   const dataString = localStorage.getItem("user");
   const dataUser = JSON.parse(dataString);
 
@@ -102,23 +87,23 @@ const Dashboards = () => {
       status: order.status,
     })),
   };
-
+console.log(data);
   return (
     <div className="">
       <div className="row mb-3 pb-1">
         <div className="col-12">
           <div className="d-flex align-items-lg-center flex-lg-row flex-column">
             <div className="flex-grow-1">
-              <h4 className="fs-16 mb-1">Good Morning, {dataUser.username}!</h4>
+              <h4 className="fs-16 mb-1">Xin chào, {dataUser.username}!</h4>
               <p className="text-muted mb-0">
-                Here's what's happening with your store today.
+                Đây là những gì đang diễn ra với cửa hàng của bạn ngày hôm nay
               </p>
             </div>
             <div className="mt-3 mt-lg-0">
               <form>
                 <div className="row g-3 mb-0 align-items-center">
                   <div className="col-sm-auto flex gap-3">
-                    <label htmlFor="">Start-date</label>
+                    <label htmlFor="">Ngày bắt đầu</label>
                     <div className="input-group ">
                       <input
                         type="date"
@@ -138,7 +123,7 @@ const Dashboards = () => {
                       </Link>
                     </div>
 
-                    <label htmlFor="">End-date</label>
+                    <label htmlFor="">Ngày kết thúc</label>
                     <div className="input-group">
                       <input
                         type="date"
@@ -172,7 +157,7 @@ const Dashboards = () => {
               <div className="d-flex align-items-center">
                 <div className="flex-grow-1 overflow-hidden">
                   <p className="text-uppercase fw-medium text-muted text-truncate mb-0">
-                    Total Earnings
+                    Tổng doanh thu
                   </p>
                 </div>
               </div>
@@ -200,7 +185,7 @@ const Dashboards = () => {
               <div className="d-flex align-items-center">
                 <div className="flex-grow-1 overflow-hidden">
                   <p className="text-uppercase fw-medium text-muted text-truncate mb-0">
-                    Total Orders
+                    Tổng số đơn hàng
                   </p>
                 </div>
               </div>
@@ -228,7 +213,7 @@ const Dashboards = () => {
               <div className="d-flex align-items-center">
                 <div className="flex-grow-1 overflow-hidden">
                   <p className="text-uppercase fw-medium text-muted text-truncate mb-0">
-                    Total Customers
+                    Tổng người dùng
                   </p>
                 </div>
               </div>
@@ -256,7 +241,7 @@ const Dashboards = () => {
               <div className="d-flex align-items-center">
                 <div className="flex-grow-1 overflow-hidden">
                   <p className="text-uppercase fw-medium text-muted text-truncate mb-0">
-                    Total Product
+                    Tổng số sản phẩm
                   </p>
                 </div>
               </div>
@@ -288,7 +273,7 @@ const Dashboards = () => {
         <div className="col-xl-12">
           <div className="card p-2">
             <div className="card-header border-0 align-items-center d-flex">
-              <h4 className="card-title mb-0 flex-grow-1">Order Number</h4>
+              <h4 className="card-title mb-0 flex-grow-1">Số lượng đơn hàng</h4>
             </div>
             <NumberOrder chart={mappedData.chart} />
           </div>
@@ -299,7 +284,9 @@ const Dashboards = () => {
         <div className="col-xl-12">
           <div className="card p-2">
             <div className="card-header border-0 align-items-center d-flex">
-              <h4 className="card-title mb-0 flex-grow-1">Total Order</h4>
+              <h4 className="card-title mb-0 flex-grow-1">
+                Tổng số đơn hàng thành công
+              </h4>
             </div>
             <TotalOrder chart={mappedData.chart} />
           </div>
@@ -311,7 +298,7 @@ const Dashboards = () => {
           <div className="card">
             <div className="card-header align-items-center d-flex">
               <h4 className="card-title mb-0 flex-grow-1">
-                Best Selling Products
+                Sản phẩm bán chạy nhất
               </h4>
             </div>
             <div className="card-body">
@@ -322,11 +309,11 @@ const Dashboards = () => {
                       <tr key={index}>
                         <td>
                           <div className="d-flex align-items-center">
-                            <div className="avatar-sm bg-light rounded p-1 me-2">
+                            <div className="avatar-sm  bg-light rounded p-1 me-2">
                               <img
                                 src={item.product_image}
                                 alt=""
-                                className="img-fluid d-block"
+                                className="img-fluid d-block max-h-14"
                               />
                             </div>
                             <div>
@@ -340,10 +327,7 @@ const Dashboards = () => {
                                     : item.product_name}
                                 </Link>
                               </h5>
-                              <span className="text-muted">
-                                Phân loại : {item.variant_name}
-                              </span>
-                              <br />
+
                               <span className="text-muted">
                                 {item.last_order_date}
                               </span>
@@ -354,25 +338,27 @@ const Dashboards = () => {
                           <h5 className="fs-14 my-1 fw-normal">
                             <FormatPrice price={item.price} />
                           </h5>
-                          <span className="text-muted">Price</span>
+                          <span className="text-muted">Giá</span>
                         </td>
                         <td>
                           <h5 className="fs-14 my-1 fw-normal">
                             {item.total_orders}
                           </h5>
-                          <span className="text-muted">Orders</span>
+                          <span className="text-muted">Số lượng </span>
                         </td>
                         <td>
                           <h5 className="fs-14 my-1 fw-normal">
                             {item.quantity}
                           </h5>
-                          <span className="text-muted">Stock</span>
+                          <span className="text-muted">
+                            Số lượng còn lại trong kho
+                          </span>
                         </td>
                         <td>
                           <h5 className="fs-14 my-1 fw-normal">
                             <FormatPrice price={item.total_amount} />
                           </h5>
-                          <span className="text-muted">Amount</span>
+                          <span className="text-muted">Tổng tiền</span>
                         </td>
                       </tr>
                     ))}
@@ -388,18 +374,18 @@ const Dashboards = () => {
         <div className="col-xl-12">
           <div className="card">
             <div className="card-header align-items-center d-flex">
-              <h4 className="card-title mb-0 flex-grow-1">Recent Orders</h4>
+              <h4 className="card-title mb-0 flex-grow-1">Đơn hàng gần đây</h4>
             </div>
             <div className="card-body">
               <div className="table-responsive table-card">
                 <table className="table table-borderless table-centered align-middle table-nowrap mb-0">
                   <thead className="text-muted table-light">
                     <tr>
-                      <th scope="col">Order ID</th>
-                      <th scope="col">Customer</th>
-                      <th scope="col">Product</th>
-                      <th scope="col">Amount</th>
-                      <th scope="col">Status</th>
+                      <th scope="col">Mã đơn hàng</th>
+                      <th scope="col">Người mua</th>
+                      <th scope="col">Sản phẩm</th>
+                      <th scope="col">Giá tiền</th>
+                      <th scope="col">Trạng thái</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -432,7 +418,7 @@ const Dashboards = () => {
                         </td>
                         <td>
                           <span className="badge bg-success-subtle text-success">
-                            {getOrderStatus(item.status)}
+                            {item.status}
                           </span>
                         </td>
                       </tr>
