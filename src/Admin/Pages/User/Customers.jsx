@@ -59,7 +59,6 @@ const Customers = () => {
     e.preventDefault();
     const searchParams = new URLSearchParams(location.search);
     searchParams.set("search", searchInput);
-    console.log(searchInput);
     searchParams.set("page", "1");
     navigate(`${location.pathname}?${searchParams.toString()}`);
   };
@@ -179,9 +178,9 @@ const Customers = () => {
                               onClick={() => handleOk(item._id, !item.active)}
                             >
                               {!item.active ? (
-                                <i className="fa-solid fa-eye"></i>
+                                <i class="fa-solid fa-lock-open"></i>
                               ) : (
-                                <i className="fa-regular fa-eye-slash"></i>
+                                <i class="fa-solid fa-lock"></i>
                               )}
                             </div>
                           </li>

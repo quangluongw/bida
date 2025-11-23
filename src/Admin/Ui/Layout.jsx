@@ -1,15 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import FullScreenButton from "./FullScreen";
+import { message } from "antd";
 const Layout = () => {
-  const location = useLocation();
-
-  const [open, setOpen] = useState("");
-  useEffect(() => {
-    setOpen("");
-  }, [location]);
   const [profile, setProfile] = useState(false);
   const dropdownRef = useRef(null);
+  const nav = useNavigate();
   const handleClick = (e) => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
       setProfile(false);
@@ -38,6 +34,12 @@ const Layout = () => {
   // }
   const dataString = localStorage.getItem("user");
   const data = JSON.parse(dataString);
+  const Logout = () => {
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("user");
+    message.success("Đăng xuất thành công");
+    nav("/signin");
+  };
   return (
     <div>
       <>
@@ -135,15 +137,15 @@ const Layout = () => {
                         <i className="mdi mdi-account-circle text-muted fs-16 align-middle me-1" />
                         <span className="align-middle">Profile</span>
                       </Link>
-                      <a
-                        className="dropdown-item"
-                        href="auth-logout-basic.html"
+                      <div
+                        className="dropdown-item cursor-pointer "
+                        onClick={Logout}
                       >
                         <i className="mdi mdi-logout text-muted fs-16 align-middle me-1" />
                         <span className="align-middle" data-key="t-logout">
                           Logout
                         </span>
-                      </a>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -268,15 +270,18 @@ const Layout = () => {
                       <span data-key="t-dashboards">Danh mục</span>
                     </Link>
                   </li>
-                  <li className="nav-item">
-                    <Link
-                      to="customers"
-                      className={`nav-link menu-link ${thirdPathSegment == "Customers" ? "active" : ""}`}
-                    >
-                      <i className="fa fa-user"></i>
-                      <span data-key="t-layouts">Tài khoản</span>
-                    </Link>
-                  </li>
+                  {data.role === "manage" && (
+                    <li className="nav-item">
+                      <Link
+                        to="customers"
+                        className={`nav-link menu-link ${thirdPathSegment == "Customers" ? "active" : ""}`}
+                      >
+                        <i className="fa fa-user"></i>
+                        <span data-key="t-layouts">Tài khoản</span>
+                      </Link>
+                    </li>
+                  )}
+
                   {/*
                   <li className="nav-item">
                     <Link

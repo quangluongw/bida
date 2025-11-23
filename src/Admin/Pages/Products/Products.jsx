@@ -10,25 +10,20 @@ import { FormatPrice } from "../../../Format.jsx";
 import { useDeleteProduct, useProduct } from "../../../Hook/useProduct.jsx";
 import Emptys from "../../Ui/Emty.jsx";
 const Products = () => {
+  const dataString = localStorage.getItem("user");
+  const data = JSON.parse(dataString);
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get("page")) || 1;
-  const [id, setId] = useState("");
-  const [sorttype, setSorttype] = useState(1);
   const [searchParam] = useSearchParams();
   const navigate = useNavigate();
   const search = searchParam.get("search");
-  const sort = searchParam.get("sort");
   const { isProducts, products } = useProduct(page, {
-    sort,
     search,
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [idDelete, setIdDelete] = useState("");
-  const { mutate } = useDeleteProduct(() => {
-    // setOpen(false);
-    setId("");
-  });
+  const { mutate } = useDeleteProduct();
   const showModal = (id) => {
     setIdDelete(id);
     setIsModalOpen(true);
@@ -53,19 +48,6 @@ const Products = () => {
   //     navigate(`?${updateValue.toString()}`);
   //   }
   // };
-  const handleSort = () => {
-    const updatedParams = new URLSearchParams(searchParam.toString());
-    updatedParams.delete("sort");
-    if (sorttype === 1) {
-      setSorttype(2);
-      updatedParams.set("sort", "1");
-    } else {
-      setSorttype(1);
-      updatedParams.set("sort_price", "");
-    }
-
-    navigate(`?${updatedParams.toString()}`);
-  };
 
   if (isProducts) {
     return (
@@ -129,9 +111,8 @@ const Products = () => {
                         <th>#</th>
                         <th>Tên sản phẩm</th>
                         <th>Danh mục</th>
-                        <th className="sort" onClick={() => handleSort()}>
-                          Giá
-                        </th>
+                        <th>Giá</th>
+                        <th>Giảm giá</th>
                         <th>Ảnh</th>
                         <th>Trạng thái</th>
                         <th>Hành động</th>
@@ -158,10 +139,11 @@ const Products = () => {
                           <td className="amount">
                             {<FormatPrice price={item.price} />}
                           </td>
+                          <td className="amount">{item.discount} %</td>
                           <td>
                             <Image
                               width={200}
-                             style={{maxHeight:"200px"}}
+                              style={{ maxHeight: "200px" }}
                               src={item.imageUrl}
                               alt="product"
                             />
@@ -198,14 +180,16 @@ const Products = () => {
                                   <i className="ri-pencil-fill fs-16" />
                                 </Link>
                               </li>
-                              <li className="list-inline-item">
-                                <div
-                                  className="text-danger d-inline-block remove-item-btn"
-                                  onClick={() => showModal(item._id)}
-                                >
-                                  <i className="ri-delete-bin-5-fill fs-16"></i>
-                                </div>
-                              </li>
+                              {data.role === "manage" && (
+                                <li className="list-inline-item">
+                                  <div
+                                    className="text-danger d-inline-block remove-item-btn"
+                                    onClick={() => showModal(item._id)}
+                                  >
+                                    <i className="ri-delete-bin-5-fill fs-16"></i>
+                                  </div>
+                                </li>
+                              )}
                             </ul>
                           </td>
                         </tr>

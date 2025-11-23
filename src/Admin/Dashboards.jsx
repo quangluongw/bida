@@ -87,7 +87,7 @@ const Dashboards = () => {
       status: order.status,
     })),
   };
-console.log(data);
+console.log(mappedData);
   return (
     <div className="">
       <div className="row mb-3 pb-1">
@@ -322,9 +322,9 @@ console.log(data);
                                   to={`product_detail/${item.id}`}
                                   className="text-reset"
                                 >
-                                  {item.product_name.length > 20
-                                    ? item.product_name.slice(0, 20) + "..."
-                                    : item.product_name}
+                                  {item?.product_name?.length > 20
+                                    ? item?.product_name?.slice(0, 20) + "..."
+                                    : item?.product_name}
                                 </Link>
                               </h5>
 

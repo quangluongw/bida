@@ -1,17 +1,10 @@
 import { Form, Input, Select, Spin, Switch, Upload, message } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import { Loader, Plus } from "lucide-react";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { addProduct } from "../../../Apis/Api.jsx";
 import { useCategory } from "../../../Hook/useCategory.jsx";
-
-const getBase64 = (img, callback) => {
-  const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result));
-  reader.readAsDataURL(img);
-};
 
 const beforeUpload = (file) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
@@ -30,44 +23,14 @@ const beforeUpload = (file) => {
 const AddProduct = () => {
   const [form] = Form.useForm();
   const { category, isCategory } = useCategory();
-  const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState("");
-  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
-  const [status,setStatus]=useState(true)
+
+  const [imageUrl] = useState("");
+  const [fileList, setFileList] = useState([]);
+
+  const [status, setStatus] = useState(true);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const handleChange = (info) => {
-    if (info.file.status === "uploading") {
-      setLoading(true);
-      return;
-    }
-    if (info.file.status === "done") {
-      // Lấy URL từ Cloudinary response
-      const cloudinaryUrl =
-        info.file.response?.secure_url || info.file.response?.url;
-      if (cloudinaryUrl) {
-        setUploadedImageUrl(cloudinaryUrl);
-      }
-
-      // Hiển thị preview
-      getBase64(info.file.originFileObj, (url) => {
-        setLoading(false);
-        setImageUrl(url);
-      });
-    }
-    if (info.file.status === "error") {
-      setLoading(false);
-      message.error("Upload ảnh thất bại!");
-    }
-  };
-
-  const uploadButton = (
-    <button style={{ border: 0, background: "none" }} type="button">
-      {loading ? <Loader className="animate-spin" /> : <Plus />}
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </button>
-  );
   const onChangeStatus = (checked) => {
     setStatus(checked);
   };
@@ -78,8 +41,6 @@ const AddProduct = () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       message.success("Thêm sản phẩm thành công!");
       form.resetFields();
-      setImageUrl("");
-      setUploadedImageUrl("");
       navigate("/products");
     },
     onError: (error) => {
@@ -90,19 +51,37 @@ const AddProduct = () => {
   });
 
   const onSubmit = (values) => {
-    if (!uploadedImageUrl && !imageUrl) {
-      message.error("Vui lòng upload ảnh sản phẩm!");
-      return;
-    }
-
     const productData = {
       ...values,
-      imageUrl: uploadedImageUrl || imageUrl,
+      imageUrl: fileList[0].url || imageUrl,
       caterori: values.caterori,
+      abumImage: fileList.map((item) => item.url),
       status: status,
     };
 
     mutate(productData);
+  };
+
+  const validateFileList = () => {
+    if (fileList.length < 1) {
+      return Promise.reject(new Error("Please upload at least 5 images"));
+    }
+    return Promise.resolve();
+  };
+
+  const onhandluploadimg = (e) => {
+    let newFileList = [...e.fileList];
+
+    // Nếu upload thành công, cập nhật URL
+    newFileList = newFileList.map((file) => {
+      if (file.response) {
+        file.url = file.response.url; // URL trả về từ server
+      }
+      return file;
+    });
+
+    setFileList(newFileList);
+    // setImg(!img);
   };
 
   if (isCategory) {
@@ -127,36 +106,74 @@ const AddProduct = () => {
             <div className="grid grid-cols-12 mb-4 gap-4">
               <div className="flex gap-1 mb-2 col-span-2 justify-end items-start pt-2">
                 <span className="text-red-500">*</span>
-                <div className="text-[1rem]">Ảnh</div>
+                <div className="text-[1rem]">Abum Ảnh</div>
               </div>
               <div className="col-span-10">
                 <Form.Item
-                  name="image"
+                  className="col-span-10 mt-4"
                   rules={[
                     {
-                      validator: () => {
-                        if (!imageUrl && !uploadedImageUrl) {
-                          return Promise.reject("Vui lòng upload ảnh!");
-                        }
-                        return Promise.resolve();
-                      },
+                      validator: validateFileList,
                     },
                   ]}
                 >
+                  <Upload
+                    action={
+                      "https://api.cloudinary.com/v1_1/dkrcsuwbc/image/upload"
+                    }
+                    listType="picture-card"
+                    data={{
+                      upload_preset: "image1",
+                    }}
+                    accept="image/*"
+                    beforeUpload={beforeUpload}
+                    maxCount={5}
+                    onChange={(e) => onhandluploadimg(e)}
+                  >
+                    {fileList.length < 5 && (
+                      <button
+                        style={{
+                          border: 0,
+                          background: "none",
+                        }}
+                        type="button"
+                      >
+                        +
+                        <div
+                          style={{
+                            marginTop: 8,
+                            color: "red",
+                          }}
+                        >
+                          Image {fileList.length} / 5
+                        </div>
+                      </button>
+                    )}
+                  </Upload>
+                </Form.Item>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-12 mb-4 gap-4">
+              <div className="flex gap-1 mb-2 col-span-2 justify-end items-start pt-2">
+                <span className="text-red-500">*</span>
+                <div className="text-[1rem]">Ảnh</div>
+              </div>
+              <div className="col-span-10">
+                <Form.Item>
                   <Upload
                     name="file"
                     listType="picture-card"
                     className="avatar-uploader"
                     showUploadList={false}
+                    disabled
                     action="https://api.cloudinary.com/v1_1/dkrcsuwbc/image/upload"
                     data={{ upload_preset: "image1" }}
-                    beforeUpload={beforeUpload}
-                    onChange={handleChange}
                   >
-                    {imageUrl ? (
+                    {fileList.length >= 1 && (
                       <img
                         draggable={false}
-                        src={imageUrl}
+                        src={fileList[0].url}
                         alt="avatar"
                         style={{
                           width: "100%",
@@ -164,8 +181,6 @@ const AddProduct = () => {
                           objectFit: "cover",
                         }}
                       />
-                    ) : (
-                      uploadButton
                     )}
                   </Upload>
                 </Form.Item>
@@ -178,7 +193,7 @@ const AddProduct = () => {
                 <span className="text-red-500">*</span> Tên
               </div>
               <Form.Item
-                className="col-span-10 mb-0"
+                className="col-span-4 mb-0"
                 name="name"
                 rules={[
                   { required: true, message: "Tên sản phẩm là bắt buộc!" },
@@ -188,39 +203,11 @@ const AddProduct = () => {
               >
                 <Input size="large" placeholder="Nhập tên sản phẩm" />
               </Form.Item>
-            </div>
-
-            {/* Giá */}
-            <div className="grid grid-cols-12 gap-4 mb-2">
-              <div className="text-[1rem] col-span-2 text-right pt-2">
-                <span className="text-red-500">*</span> Giá
-              </div>
-              <Form.Item
-                className="col-span-10 mb-0"
-                name="price"
-                rules={[
-                  { required: true, message: "Giá là bắt buộc!" },
-                  {
-                    pattern: /^[0-9]+$/,
-                    message: "Giá phải là số!",
-                  },
-                ]}
-              >
-                <Input
-                  size="large"
-                  placeholder="Nhập giá sản phẩm"
-                  type="number"
-                />
-              </Form.Item>
-            </div>
-
-            {/* Ngành hàng */}
-            <div className="grid grid-cols-12 gap-4 mb-2">
-              <div className="text-[1rem] col-span-2 text-right pt-2">
+              <div className="text-[1rem] col-span-2 text-left pt-2">
                 <span className="text-red-500">*</span> Ngành hàng
               </div>
               <Form.Item
-                className="col-span-10 mb-0"
+                className="col-span-4 mb-0"
                 name="caterori"
                 rules={[
                   { required: true, message: "Vui lòng chọn ngành hàng!" },
@@ -236,6 +223,72 @@ const AddProduct = () => {
                 />
               </Form.Item>
             </div>
+
+            {/* Giá */}
+
+            <div className="grid grid-cols-12 gap-4 mb-2">
+              <div className="text-[1rem] col-span-2 text-right pt-2">
+                <span className="text-red-500">*</span> Giá
+              </div>
+              <Form.Item
+                className="col-span-4 mb-0"
+                name="price"
+                rules={[
+                  { required: true, message: "Giá là bắt buộc!" },
+                  {
+                    pattern: /^[0-9]+$/,
+                    message: "Giá phải là số!",
+                  },
+                ]}
+              >
+                <Input
+                  size="large"
+                  placeholder="Nhập giá sản phẩm"
+                  type="number"
+                />
+              </Form.Item>
+
+              <div className="text-[1rem] col-span-2 text-left pt-2">
+                <span className="text-red-500">*</span> Giảm Giá
+              </div>
+              <Form.Item
+                className="col-span-4 mb-0"
+                name="discount"
+                rules={[
+                  {
+                    pattern: /^[0-9]+$/,
+                    message: "Giảm giá phải là số!",
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (!value) return Promise.resolve();
+                      const numValue = Number(value);
+                      if (numValue < 1) {
+                        return Promise.reject(
+                          new Error("Giảm giá phải lớn hơn hoặc bằng 1")
+                        );
+                      }
+                      if (numValue > 99) {
+                        return Promise.reject(
+                          new Error("Giảm giá phải nhỏ hơn hoặc bằng 99")
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <Input
+                  size="large"
+                  placeholder="Nhập giảm giá (%)"
+                  type="number"
+                  min={1}
+                  max={99}
+                />
+              </Form.Item>
+            </div>
+
+
 
             {/* Mô tả */}
             <div className="grid grid-cols-12 gap-4 mb-4">
@@ -265,7 +318,11 @@ const AddProduct = () => {
                 Trạng thái
               </div>
               <div>
-                <Switch defaultChecked defaultValue={status} onChange={onChangeStatus} />
+                <Switch
+                  defaultChecked
+                  defaultValue={status}
+                  onChange={onChangeStatus}
+                />
               </div>
             </div>
           </section>
