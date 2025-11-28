@@ -114,6 +114,7 @@ const Products = () => {
                         <th>Giá</th>
                         <th>Giảm giá</th>
                         <th>Ảnh</th>
+                        <th>Số lượng</th>
                         <th>Trạng thái</th>
                         <th>Hành động</th>
                       </tr>
@@ -148,6 +149,7 @@ const Products = () => {
                               alt="product"
                             />
                           </td>
+                          <td>{item.quantity}</td>
                           <td className="status">
                             <span
                               className={`badge ${item.status === true ? "text-green-500" : "text-red-500"} text-uppercase`}
@@ -233,7 +235,7 @@ const Products = () => {
                   <div className="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
                     <h4>Are you sure ?</h4>
                     <p className="text-muted mx-4 mb-0">
-                      Are you sure you want to remove this record ?
+                      Bạn có chắc muốn xóa không
                     </p>
                   </div>
                 </div>

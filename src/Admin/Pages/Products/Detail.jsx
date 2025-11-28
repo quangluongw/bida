@@ -28,7 +28,6 @@ const Detail = () => {
       : detailProduct?.data?.imageUrl
         ? [detailProduct.data.imageUrl]
         : [];
-console.log(images);
   return (
     <div className="row">
       <div className="col-lg-12">

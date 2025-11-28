@@ -49,6 +49,7 @@ const UpdateProduct = () => {
         discount: product.discount || "",
         caterori: product.caterori?._id || product.caterori || undefined,
         description: product.description || "",
+        quantity: product.quantity || "",
       });
 
       // Set ảnh từ bumImage (album images)
@@ -340,7 +341,67 @@ const UpdateProduct = () => {
                 />
               </Form.Item>
             </div>
+            <div className="grid grid-cols-12 gap-4 mb-2">
+              <div className="text-[1rem] col-span-2 text-right pt-2">
+                <span className="text-red-500">*</span> Số lượng
+              </div>
+              <Form.Item
+                className="col-span-4 mb-0"
+                name="quantity"
+                rules={[
+                  { required: true, message: "Số lượng là bắt buộc!" },
+                  {
+                    pattern: /^[0-9]+$/,
+                    message: "Số lượng phải là số!",
+                  },
+                ]}
+              >
+                <Input
+                  size="large"
+                  placeholder="Nhập Số lượng sản phẩm"
+                  type="number"
+                />
+              </Form.Item>
 
+              {/* <div className="text-[1rem] col-span-2 text-left pt-2">
+                <span className="text-red-500">*</span> Giảm Giá
+              </div>
+              <Form.Item
+                className="col-span-4 mb-0"
+                name="discount"
+                rules={[
+                  {
+                    pattern: /^[0-9]+$/,
+                    message: "Giảm giá phải là số!",
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (!value) return Promise.resolve();
+                      const numValue = Number(value);
+                      if (numValue < 1) {
+                        return Promise.reject(
+                          new Error("Giảm giá phải lớn hơn hoặc bằng 1")
+                        );
+                      }
+                      if (numValue > 99) {
+                        return Promise.reject(
+                          new Error("Giảm giá phải nhỏ hơn hoặc bằng 99")
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <Input
+                  size="large"
+                  placeholder="Nhập giảm giá (%)"
+                  type="number"
+                  min={1}
+                  max={99}
+                />
+              </Form.Item> */}
+            </div>
             {/* Mô tả */}
             <div className="grid grid-cols-12 gap-4 mb-4">
               <div className="text-[1rem] col-span-2 text-right pt-2">

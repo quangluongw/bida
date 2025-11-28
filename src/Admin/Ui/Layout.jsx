@@ -270,6 +270,15 @@ const Layout = () => {
                       <span data-key="t-dashboards">Danh mục</span>
                     </Link>
                   </li>
+                  <li className="nav-item">
+                    <Link
+                      to="/voucher"
+                      className={`nav-link menu-link ${thirdPathSegment === "Voucher" ? "active" : ""}`}
+                    >
+                      <i class="fa-solid fa-ticket"></i>
+                      <span data-key="t-dashboards">Mã giảm giá</span>
+                    </Link>
+                  </li>
                   {data.role === "manage" && (
                     <li className="nav-item">
                       <Link

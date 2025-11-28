@@ -173,4 +173,27 @@ export const resetpassword = async (data) => {
   return res.data;
 };
 
+export const getVouchers = async () => {
+  const res = await Axios.get(`/vouchers`);
+  return res.data;
+};
 
+export const getVoucherDetail = async (id) => {
+  const res = await Axios.get(`/vouchers/${id}`);
+  return res.data;
+};
+
+export const createVoucher = async (data) => {
+  const res = await Axios.post(`/voucher`, data);
+  return res.data;
+};
+
+export const updateVoucher = async (id, data) => {
+  const res = await Axios.patch(`/voucher/${id}`, data);
+  return res.data;
+};
+
+export const deleteVoucher = async (id) => {
+  const res = await Axios.delete(`/voucher/${id}`);
+  return res.data;
+};

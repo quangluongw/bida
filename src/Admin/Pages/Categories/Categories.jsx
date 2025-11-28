@@ -9,8 +9,8 @@ import {
 } from "../../../Hook/useCategory";
 
 const Categories = () => {
-    const dataString = localStorage.getItem("user");
-    const data = JSON.parse(dataString);
+  const dataString = localStorage.getItem("user");
+  const data = JSON.parse(dataString);
   const { category, isCategory } = useCategory();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [idDelete, setIdDelete] = useState("");
@@ -50,7 +50,7 @@ const Categories = () => {
   const handleOk = () => {
     mutate(idDelete);
     setIdDelete("");
-    setIsModalOpen(false)
+    setIsModalOpen(false);
   };
 
   const handleCancelDetail = () => {
@@ -264,7 +264,7 @@ const Categories = () => {
                 <div className="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
                   <h4>Are you sure ?</h4>
                   <p className="text-muted mx-4 mb-0">
-                    Are you sure you want to remove this record ?
+                    Bạn có chắc muốn xóa không
                   </p>
                 </div>
               </div>

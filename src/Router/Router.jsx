@@ -5,6 +5,7 @@ import "../../node_modules/nprogress/nprogress.css";
 import PrivateRouter from "./PrivateRouter.jsx";
 import Signin from "../Admin/Pages/Signin.jsx";
 import Signup from "../Admin/Pages/Signup.jsx";
+import VoucherList from "../Admin/Pages/Vouchers/VoucherList.jsx";
 // Admin Pages
 const LayoutAdmin = lazy(() => import("../Admin/Ui/Layout.jsx"));
 const Dashboards = lazy(() => import("../Admin/Dashboards.jsx"));
@@ -48,7 +49,7 @@ const Router = () => {
           element={
             <PrivateRouter>
               <LayoutAdmin />
-             </PrivateRouter>
+            </PrivateRouter>
           }
         >
           <Route index element={<Dashboards />} />
@@ -62,12 +63,13 @@ const Router = () => {
           <Route path="order" element={<Orders />} />
           <Route path="order_detail/:id" element={<Order_Detail />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="voucher" element={<VoucherList />} />
           <Route path="fullscreen" element={<FullScreenButton />} />
           {/* <Route path="login/callback" element={<LoginCallback />} /> */}
         </Route>
 
-          <Route path="signin" element={<Signin />} />
-          <Route path="signup" element={<Signup />} />
+        <Route path="signin" element={<Signin />} />
+        <Route path="signup" element={<Signup />} />
         {/* Other Routes */}
         {/* <Route path="logout" element={<Logout />} /> */}
         <Route path="*" element={<Error />} />
