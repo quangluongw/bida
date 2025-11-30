@@ -168,7 +168,7 @@ const Customers = () => {
                         </td>
                         <td className="role">
                           <span className="text-sm text-uppercase">
-                            {item.role == 0 ? "User" : "Admin"}
+                            {item.role}
                           </span>
                         </td>
                         <td className="text-center">

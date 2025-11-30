@@ -56,15 +56,6 @@ const Order_Detail = () => {
                 <h5 className="card-title flex-grow-1 items-center mb-0 text-uppercase">
                   Mã đơn hàng #{data?.madh || "N/A"}
                 </h5>
-                <div className="flex-shrink-0">
-                  <a
-                    href="apps-invoices-details.html"
-                    className="px-3 py-2 rounded-md btn-success btn-sm"
-                  >
-                    <i className="ri-download-2-fill align-middle me-1" />
-                    Invoice
-                  </a>
-                </div>
               </div>
             </div>
             <div className="card-body">
@@ -127,6 +118,12 @@ const Order_Detail = () => {
                       <td colSpan={2} className="fw-medium p-0">
                         <table className="table table-borderless mb-0">
                           <tbody>
+                            <tr className="border-top border-top-dashed">
+                              <th scope="row"> Mã giảm giá :</th>
+                              <th className="text-end ">
+                                {data?.voucherId?.discount || 0} %
+                              </th>
+                            </tr>
                             <tr className="border-top border-top-dashed">
                               <th scope="row">Tổng :</th>
                               <th className="text-end text-xl">
@@ -230,7 +227,27 @@ const Order_Detail = () => {
               </ul>
             </div>
           </div>
+          <div className="card">
+            <div className="card-header">
+              <h5 className="card-title mb-0">
+                <i className="ri-map-pin-line align-middle me-1 text-muted" />
+                Thông tin thanh toán
+              </h5>
+            </div>
+            <div className="card-body">
+              <ul className="list-unstyled vstack gap-2 fs-15 mb-0">
+                <li className=" fs-14">
+                  Hình thức thanh toán : {data.payment}
+                </li>
+                <li>
+                  Trạng thái thanh toán:{" "}
+                  {data.isPaymentSucces ? "Đã thanh toán" : "Chưa Thanh Toán"}
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
+
         {/*end col*/}
       </div>
       <Modal
