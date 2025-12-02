@@ -91,22 +91,24 @@ const Order_Detail = () => {
                             <div className="flex-grow-1 ms-3">
                               <h5 className="fs-15">
                                 <div>
-                                  {item.productId.name.length > 20
-                                    ? item.productId.name.slice(0, 40) + "..."
-                                    : item.productId.name}
+                                  {item.name.length > 20
+                                    ? item.name.slice(0, 40) + "..."
+                                    : item.name}
                                 </div>
                               </h5>
                             </div>
                           </div>
                         </td>
                         <td className="text-center">
-                          {<FormatPrice price={item.productId.price} />}
+                          {<FormatPrice price={item.priceAfterDis} />}
                         </td>
                         <td className="text-center">{item.quantity}</td>
                         <td className="fw-medium text-end">
                           {
                             <FormatPrice
-                              price={item.productId.price * item.quantity}
+                              price={
+                                item.priceAfterDis * item.quantity
+                              }
                             />
                           }
                         </td>
