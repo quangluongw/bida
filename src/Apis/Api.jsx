@@ -197,3 +197,12 @@ export const deleteVoucher = async (id) => {
   const res = await Axios.delete(`/voucher/${id}`);
   return res.data;
 };
+
+export const getComments = async () => {
+  const res = await Axios.get(`/comment/admin/products`);
+  return res.data;
+};
+export const getCommentDetail = async (id) => {
+  const res = await Axios.get(`/comment/${id}`);
+  return res.data;
+};

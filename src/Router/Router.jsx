@@ -6,6 +6,8 @@ import PrivateRouter from "./PrivateRouter.jsx";
 import Signin from "../Admin/Pages/Signin.jsx";
 import Signup from "../Admin/Pages/Signup.jsx";
 import VoucherList from "../Admin/Pages/Vouchers/VoucherList.jsx";
+import CommentList from "../Admin/Pages/Comment/CommentList.jsx";
+import CommentListProduct from "../Admin/Pages/Comment/CommentListProduct.jsx";
 // Admin Pages
 const LayoutAdmin = lazy(() => import("../Admin/Ui/Layout.jsx"));
 const Dashboards = lazy(() => import("../Admin/Dashboards.jsx"));
@@ -64,6 +66,8 @@ const Router = () => {
           <Route path="order_detail/:id" element={<Order_Detail />} />
           <Route path="profile" element={<Profile />} />
           <Route path="voucher" element={<VoucherList />} />
+          <Route path="comment" element={<CommentListProduct />} />
+          <Route path="commentdetail/:id" element={<CommentList />} />
           <Route path="fullscreen" element={<FullScreenButton />} />
           {/* <Route path="login/callback" element={<LoginCallback />} /> */}
         </Route>
