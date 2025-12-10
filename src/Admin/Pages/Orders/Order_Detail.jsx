@@ -10,7 +10,6 @@ const Order_Detail = () => {
   const [isOpenOrder, setIsOpenOrder] = useState(false);
   const { isLoading: isLoadingorder, mutate } = useStatusOrderAdmin(id);
   const { data, isLoading } = UseDetailOrder(id);
-  console.log(data);
   const [idOpen, setIdOpen] = useState("");
   const [status, setStatus] = useState();
   const { handleSubmit } = useForm();
@@ -106,9 +105,7 @@ const Order_Detail = () => {
                         <td className="fw-medium text-end">
                           {
                             <FormatPrice
-                              price={
-                                item.priceAfterDis * item.quantity
-                              }
+                              price={item.priceAfterDis * item.quantity}
                             />
                           }
                         </td>
@@ -265,7 +262,7 @@ const Order_Detail = () => {
             {[
               { label: "Xác nhận", value: "Xác nhận" },
               { label: "Đang giao hàng", value: "Đang giao hàng" },
-              { label: "Thành công", value: "Thành công" },
+              { label: "Thành công", value: "Thành Công" },
               { label: "Hủy", value: "Hủy" },
             ].map((item) => (
               <label className="radio" key={item.value}>

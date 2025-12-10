@@ -9,7 +9,6 @@ const Orders = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
 
-  const page = parseInt(searchParams.get("page")) || 1;
   const searchParam = searchParams.get("search") || "";
   const statusParam = searchParams.get("status") || "";
   const paymentParam = searchParams.get("payment") || "";
@@ -20,7 +19,7 @@ const Orders = () => {
   const [paymen, setPaymen] = useState(paymentParam);
 
   // gọi API với param từ URL
-  const { data, isLoading } = useOrder(page, {
+  const { data, isLoading } = useOrder( {
     search: searchParam,
     statusOrder: statusParam,
     payment: paymentParam,
@@ -33,11 +32,6 @@ const Orders = () => {
     setPaymen(paymentParam);
   }, [searchParam, statusParam, paymentParam]);
 
-  const onShowSizeChange = (current) => {
-    const searchParams = new URLSearchParams(location.search);
-    searchParams.set("page", current);
-    navigate(`${location.pathname}?${searchParams.toString()}`);
-  };
 
   const getOrderStatusColor = (status) => {
     const statusMapping = {
@@ -198,7 +192,7 @@ const Orders = () => {
                           </td>
                           <td className="payment">{order.payment}</td>
                           <td className="payment">
-                            {order.isPaymentSucces
+                            {order.payment!=="COD"
                               ? "Đã thanh toán"
                               : "Chưa thanh toán"}
                           </td>
@@ -230,15 +224,6 @@ const Orders = () => {
                       ))}
                     </tbody>
                   </table>
-
-                  <Pagination
-                    showSizeChanger
-                    onChange={onShowSizeChange}
-                    current={data.current_page}
-                    total={data.total}
-                    pageSize={data.per_page}
-                    align="center"
-                  />
                 </div>
               </div>
             </div>

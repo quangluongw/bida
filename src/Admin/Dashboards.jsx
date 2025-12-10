@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { FormatPrice } from "../Format";
 import useDashboard from "../Hook/useDashboard";
-import { NumberOrder, TotalOrder } from "./Char";
+import { NumberOrder } from "./Char";
 
 const Dashboards = () => {
   const [searchParams] = useSearchParams();
@@ -50,8 +50,8 @@ const Dashboards = () => {
   const mappedData = {
     // Totals mapping
     totalRevenue: data?.totals?.totalEarnings || 0,
-    ordersCount: data?.totals?.totalOrders || 0,
-    usersCount: data?.totals?.totalCustomers || 0,
+    ordersCount: data?.totals?.totalOrdersAll || 0,
+    usersCount: data?.totals?.totalCustomersAll || 0,
     productCount: data?.totals?.totalProduct || 0,
 
     // Charts mapping
@@ -280,7 +280,7 @@ console.log(mappedData);
         </div>
       </div>
 
-      <div className="row">
+      {/* <div className="row">
         <div className="col-xl-12">
           <div className="card p-2">
             <div className="card-header border-0 align-items-center d-flex">
@@ -291,7 +291,7 @@ console.log(mappedData);
             <TotalOrder chart={mappedData.chart} />
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="row">
         <div className="col-xl-12">

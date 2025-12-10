@@ -27,10 +27,10 @@ const UseDetailOrder = () => {
   };
 };
 
-const useOrder = (page, filters = {}) => {
+const useOrder = ( filters = {}) => {
   const { data, isLoading } = useQuery({
-    queryKey: ["order", page, filters],
-    queryFn: () => getOrdersAdmin(page || 1, filters),
+    queryKey: ["order",  filters],
+    queryFn: () => getOrdersAdmin( filters),
   });
   return { data, isLoading };
 };
@@ -45,7 +45,7 @@ const useStatusOrderAdmin = (id) => {
   const { mutate, isLoading } = useMutation({
     mutationFn: ({ id, data }) => udateStatusOrder(id, data),
     onSuccess: () => {
-      message.success("Status update successful");
+      message.success("Cập nhật trạng thái thành công");
       queryClient.invalidateQueries({ queryKey: ["order_id", id] });
     },
     onError: (error) => {

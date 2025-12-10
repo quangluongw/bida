@@ -2,13 +2,9 @@ import useAuth from "../Hook/useAuth";
 import Axios from "./Axios";
 export const getProducts = async (page, filters = {}) => {
   const params = new URLSearchParams();
-  params.append("page", page);
-  // Add filters if they exist
   if (filters.price) params.append("price", filters.price);
-  if (filters.category_id) params.append("category_id", filters.category_id);
-  if (filters.sort) params.append("sort_price", filters.sort);
   if (filters.search) params.append("search", filters.search);
-  const res = await Axios.get(`/products?${params.toString()}`);
+  const res = await Axios.get(`/products`);
   return res.data;
 };
 export const getCategory = async () => {
@@ -119,9 +115,8 @@ export const updateUsers = async (id, data) => {
   const res = await Axios.patch(`/user/${id}`, data);
   return res.data;
 };
-export const getOrdersAdmin = async (page, filters = {}) => {
+export const getOrdersAdmin = async ( filters = {}) => {
   const params = new URLSearchParams({
-    page,
     ...(filters.search && { search: filters.search }),
     ...(filters.statusOrder && { status: filters.statusOrder }),
     ...(filters.paymen && { payment: filters.paymen }),

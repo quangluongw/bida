@@ -1,26 +1,13 @@
-import { Image, Modal, Pagination, Spin } from "antd";
+import { Image, Modal, Spin } from "antd";
 import { useState } from "react";
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FormatPrice } from "../../../Format.jsx";
 import { useDeleteProduct, useProduct } from "../../../Hook/useProduct.jsx";
 import Emptys from "../../Ui/Emty.jsx";
 const Products = () => {
   const dataString = localStorage.getItem("user");
   const data = JSON.parse(dataString);
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const page = parseInt(searchParams.get("page")) || 1;
-  const [searchParam] = useSearchParams();
-  const navigate = useNavigate();
-  const search = searchParam.get("search");
-  const { isProducts, products } = useProduct(page, {
-    search,
-  });
+  const { isProducts, products } = useProduct();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [idDelete, setIdDelete] = useState("");
   const { mutate } = useDeleteProduct();
@@ -35,11 +22,7 @@ const Products = () => {
     mutate(idDelete);
     setIsModalOpen(false);
   };
-  const onShowSizeChange = (current) => {
-    const searchParams = new URLSearchParams(location.search);
-    searchParams.set("page", current);
-    navigate(`${location.pathname}?${searchParams.toString()}`);
-  };
+
   // const handleSearch = (e) => {
   //   if (e.key === "Enter") {
   //     const value = e.target.value.trim();
@@ -198,14 +181,6 @@ const Products = () => {
                       ))}
                     </tbody>
                   </table>
-                  <Pagination
-                    showSizeChanger
-                    onChange={onShowSizeChange}
-                    current={products.data.current_page}
-                    total={products.data.total}
-                    pageSize={products.data.per_page}
-                    align="center"
-                  />
                 </div>
               </div>
             </div>

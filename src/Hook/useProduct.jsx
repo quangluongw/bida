@@ -8,10 +8,10 @@ import {
   getProducts,
 } from "../Apis/Api";
 
-export const useProduct = (page, filters = {}) => {
+export const useProduct = ( ) => {
   const { data: products, isLoading: isProducts } = useQuery({
-    queryKey: ["products", page, filters],
-    queryFn: () => getProducts(page || 1, filters),
+    queryKey: ["products"],
+    queryFn: () => getProducts(),
   });
   return { products, isProducts };
 };
@@ -40,23 +40,6 @@ export const useDeleteProduct = (onSuccessCallback) => {
     mutationFn: (id) => forceDeleteProduct(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
-      message.success("Product deleted successfully");
-      onSuccessCallback?.();
-    },
-    onError: (error) => {
-      message.error(error.response.data.message);
-    },
-  });
-
-  return { mutate, isLoading };
-};
-export const useforceDeleteProduct = (onSuccessCallback) => {
-  const queryClient = useQueryClient();
-
-  const { mutate, isLoading } = useMutation({
-    mutationFn: (id) => forceDeleteProduct(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["harddeleteproducts"] });
       message.success("Product deleted successfully");
       onSuccessCallback?.();
     },
