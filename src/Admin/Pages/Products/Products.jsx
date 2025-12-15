@@ -123,7 +123,7 @@ const Products = () => {
                           <td className="amount">
                             {<FormatPrice price={item.price} />}
                           </td>
-                          <td className="amount">{item.discount} %</td>
+                          <td className="amount">{item.discount||0} %</td>
                           <td>
                             <Image
                               width={200}
