@@ -196,6 +196,12 @@ const Order_Detail = () => {
                                 }
                               </span>
                             </h6>
+                            {data?.status === "Hủy" && (
+                              <span className="flex gap-2 text-[14px] items-center">
+                                <h6 className="fs-15">Lý do hủy :</h6>
+                                {data?.cancelReason}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>

@@ -75,6 +75,7 @@ const CommentList = () => {
                       <th>#</th>
                       <th>Người dùng</th>
                       <th>Nội dung</th>
+                      <th>Số sao</th>
                       <th>Ngày đánh giá</th>
                     </tr>
                   </thead>
@@ -102,6 +103,7 @@ const CommentList = () => {
                               ? `${comment.content.slice(0, 50)}...`
                               : comment.content}
                           </td>
+                          <td>{comment.rating}</td>
                           <td>
                             {new Date(comment.createdAt).toLocaleString()}
                           </td>
