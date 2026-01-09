@@ -98,6 +98,8 @@ const Products = () => {
                         <th>Giảm giá</th>
                         <th>Ảnh</th>
                         <th>Số lượng</th>
+                        <th>Người tạo</th>
+                        <th>Người cập nhật</th>
                         <th>Trạng thái</th>
                         <th>Hành động</th>
                       </tr>
@@ -123,16 +125,18 @@ const Products = () => {
                           <td className="amount">
                             {<FormatPrice price={item.price} />}
                           </td>
-                          <td className="amount">{item.discount||0} %</td>
+                          <td className="amount">{item.discount || 0} %</td>
                           <td>
                             <Image
-                              width={200}
+                              width={100}
                               style={{ maxHeight: "200px" }}
                               src={item.imageUrl}
                               alt="product"
                             />
                           </td>
                           <td>{item.quantity}</td>
+                          <td>{item.createdBy?.username}</td>
+                          <td>{item.updatedBy?.username}</td>
                           <td className="status">
                             <span
                               className={`badge ${item.status === true ? "text-green-500" : "text-red-500"} text-uppercase`}

@@ -202,13 +202,15 @@ const Order_Detail = () => {
                                 }
                               </span>
                             </h6>
-                            {data?.handledBy&&   <h6 className="fs-15">
-                              Người {data?.status} : {data?.handledBy?.username}
-                            </h6>}
-                          
+                            {data?.handledBy && (
+                              <h6 className="fs-15">
+                                Người {data?.status} :
+                                {data?.handledBy?.username}
+                              </h6>
+                            )}
+
                             {data?.status === "Hủy" && (
                               <div className=" gap-2 text-[14px] items-center">
-                                <h6>Người Hủy : {data?.handledBy?.username}</h6>
                                 <div>
                                   <h6 className="fs-15">
                                     Lý do hủy : {data?.cancelReason}

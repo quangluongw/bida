@@ -35,9 +35,8 @@ const UpdateProduct = () => {
   const [form] = Form.useForm();
   const { category, isCategory } = useCategory();
   const { detailProduct, isDetailProduct } = useDetailProduct();
-
+  const idAdmin = JSON.parse(localStorage.getItem("user"));
   const [status, setStatus] = useState(true);
-
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -136,6 +135,7 @@ const UpdateProduct = () => {
       bumImage: bumImage,
       imageUrl: imageUrl,
       status: status,
+      updatedBy: idAdmin._id,
     };
 
     mutate(productData);

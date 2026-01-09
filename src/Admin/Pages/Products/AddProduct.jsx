@@ -32,6 +32,7 @@ const beforeUpload = (file) => {
 const AddProduct = () => {
   const [form] = Form.useForm();
   const { category, isCategory } = useCategory();
+  const idAdmin = JSON.parse(localStorage.getItem("user"));
 
   const [imageUrl] = useState("");
   const [fileList, setFileList] = useState([]);
@@ -66,8 +67,9 @@ const AddProduct = () => {
       caterori: values.caterori,
       abumImage: fileList.map((item) => item.url),
       status: status,
+      createdBy: idAdmin._id,
     };
-console.log(productData);
+
     mutate(productData);
   };
 
