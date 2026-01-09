@@ -1,7 +1,7 @@
 import { Button, Modal, Spin, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { FormatDate } from "../../../Format";
+import { FormatDate, FormatPrice } from "../../../Format";
 import {
   useAddVoucher,
   useDeleteVoucher,
@@ -45,6 +45,7 @@ const VoucherList = () => {
           : "",
         quantity: voucherToUpdate.quantity,
         isActive: voucherToUpdate.isActive,
+        maxPriceDis: voucherToUpdate.maxPriceDis,
         description: voucherToUpdate.description,
       });
     }
@@ -285,12 +286,7 @@ const VoucherList = () => {
           <Button key="back" onClick={handleCancelDelete}>
             Cancel
           </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            onClick={handleConfirmDelete}
-          >
-          
+          <Button key="submit" type="primary" onClick={handleConfirmDelete}>
             OK
           </Button>,
         ]}
@@ -360,6 +356,20 @@ const VoucherList = () => {
             />
             {errors.discount && (
               <span className="text-red-500">{errors.discount.message}</span>
+            )}
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Số tiền giảm tối thiểu</label>
+            <input
+              type="number"
+              className="form-control"
+              {...register("maxPriceDis", {
+                required: "Vui lòng nhập số tiền giảm tối thiểu",
+                valueAsNumber: true,
+              })}
+            />
+            {errors.maxPriceDis && (
+              <span className="text-red-500">{errors.maxPriceDis.message}</span>
             )}
           </div>
           <div className="mb-3">
@@ -447,6 +457,12 @@ const VoucherList = () => {
               <p>{voucherToDetail.discount}%</p>
             </div>
             <div className="mb-3">
+              <label className="form-label font-semibold">Giảm giá:</label>
+              <p>
+                <FormatPrice price={voucherToDetail.maxPriceDis} />
+              </p>
+            </div>
+            <div className="mb-3">
               <label className="form-label font-semibold">Ngày bắt đầu:</label>
               <p>
                 <FormatDate date={voucherToDetail.startDate} />
@@ -518,6 +534,20 @@ const VoucherList = () => {
             />
             {errors.discount && (
               <span className="text-red-500">{errors.discount.message}</span>
+            )}
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Số tiền giảm tối thiểu</label>
+            <input
+              type="number"
+              className="form-control"
+              {...register("maxPriceDis", {
+                required: "Vui lòng nhập số tiền giảm tối thiểu",
+                valueAsNumber: true,
+              })}
+            />
+            {errors.maxPriceDis && (
+              <span className="text-red-500">{errors.maxPriceDis.message}</span>
             )}
           </div>
           <div className="mb-3">

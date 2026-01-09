@@ -54,23 +54,10 @@ const useStatusOrderAdmin = (id) => {
   });
   return { mutate, isLoading };
 };
-const useOrderUpdate = () => {
-  const queryClient = useQueryClient();
-  const { mutate, isLoading } = useMutation({
-    mutationFn: ({ id, data }) => orderUpdate(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["order"] });
-    },
-    onError: (error) => {
-      message.error(error.response.data.message);
-    },
-  });
-  return { mutate, isLoading };
-};
+
 export {
   UseDetailOrder,
   useOrder,
-  useOrderUpdate,
   useStatusOrderAdmin,
 
 };

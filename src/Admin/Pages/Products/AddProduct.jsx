@@ -1,4 +1,13 @@
-import { Form, Input, Select, Spin, Switch, Upload, message } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Select,
+  Spin,
+  Switch,
+  Upload,
+  message,
+} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
@@ -58,7 +67,7 @@ const AddProduct = () => {
       abumImage: fileList.map((item) => item.url),
       status: status,
     };
-
+console.log(productData);
     mutate(productData);
   };
 
@@ -93,9 +102,16 @@ const AddProduct = () => {
   }
 
   return (
-    <section className="grid grid-cols-12 gap-4 px-4">
+    <section className="grid grid-cols-12 gap-4">
       <section className="col-span-12">
-        <Form form={form} onFinish={onSubmit} layout="vertical">
+        <Form
+          form={form}
+          onFinish={onSubmit}
+          layout="vertical"
+          initialValues={{
+            variants: [{ color: null, price: "", quantity: "" }],
+          }}
+        >
           <section
             className="bg-white mt-10 px-4 rounded-xl py-4"
             style={{ boxShadow: "0px 0px 4px 1px #d1d1d1" }}
@@ -156,7 +172,6 @@ const AddProduct = () => {
 
             <div className="grid grid-cols-12 mb-4 gap-4">
               <div className="flex gap-1 mb-2 col-span-2 justify-end items-start pt-2">
-                <span className="text-red-500">*</span>
                 <div className="text-[1rem]">Ảnh</div>
               </div>
               <div className="col-span-10">
@@ -227,29 +242,10 @@ const AddProduct = () => {
             {/* Giá */}
 
             <div className="grid grid-cols-12 gap-4 mb-2">
-              <div className="text-[1rem] col-span-2 text-right pt-2">
-                <span className="text-red-500">*</span> Giá
-              </div>
-              <Form.Item
-                className="col-span-4 mb-0"
-                name="price"
-                rules={[
-                  { required: true, message: "Giá là bắt buộc!" },
-                  {
-                    pattern: /^[0-9]+$/,
-                    message: "Giá phải là số!",
-                  },
-                ]}
-              >
-                <Input
-                  size="large"
-                  placeholder="Nhập giá sản phẩm"
-                  type="number"
-                />
-              </Form.Item>
-
               <div className="text-[1rem] col-span-2 text-left pt-2">
-                <span className="text-red-500">*</span> Giảm Giá
+                <div className="text-[1rem] col-span-2 text-right pt-2">
+                 Giảm Giá
+                </div>
               </div>
               <Form.Item
                 className="col-span-4 mb-0"
@@ -289,7 +285,7 @@ const AddProduct = () => {
             </div>
 
             <div className="grid grid-cols-12 gap-4 mb-2">
-              <div className="text-[1rem] col-span-2 text-right pt-2">
+              {/* <div className="text-[1rem] col-span-2 text-right pt-2">
                 <span className="text-red-500">*</span> Số lượng
               </div>
               <Form.Item
@@ -308,7 +304,7 @@ const AddProduct = () => {
                   placeholder="Nhập Số lượng sản phẩm"
                   type="number"
                 />
-              </Form.Item>
+              </Form.Item> */}
 
               {/* <div className="text-[1rem] col-span-2 text-left pt-2">
                 <span className="text-red-500">*</span> Giảm Giá
@@ -386,6 +382,115 @@ const AddProduct = () => {
               </div>
             </div>
           </section>
+
+          <div
+            className=" bg-white p-3 rounded-lg mt-4 mb-4"
+            style={{ boxShadow: "rgb(209, 209, 209) 0px 0px 4px 1px" }}
+          >
+            <div className="flex justify-between">
+              <h1 className="text-[1.5rem] font-bold mb-4">
+                Biến thể sản phẩm
+              </h1>
+              <Button
+                type="dashed"
+                onClick={() =>
+                  form.setFieldsValue({
+                    variants: [
+                      ...(form.getFieldValue("variants") || []),
+                      { color: null, price: "", quantity: "" },
+                    ],
+                  })
+                }
+              >
+                Thêm biến thể
+              </Button>
+            </div>
+            <Form.List name="variants">
+              {(fields, { remove }) => (
+                <>
+                  <div className="flex flex-col gap-4 mt-4">
+                    {fields.map(({ key, name }) => (
+                      <div key={key} className="flex items-start gap-4">
+                        {/* Màu */}
+                        <Form.Item
+                          name={[name, "color"]}
+                          rules={[
+                            { required: true, message: "Vui lòng chọn màu" },
+                            ({ getFieldValue }) => ({
+                              validator(_, value) {
+                                const variants =
+                                  getFieldValue("variants") || [];
+                                const colors = variants
+                                  .map((v) => v?.color)
+                                  .filter(Boolean);
+                                const duplicate =
+                                  colors.filter((c) => c === value).length > 1;
+
+                                if (duplicate) {
+                                  return Promise.reject("Màu không được trùng");
+                                }
+                                return Promise.resolve();
+                              },
+                            }),
+                          ]}
+                        >
+                          <Select
+                            placeholder="Chọn màu"
+                            style={{ width: 200 }}
+                            options={[
+                              { value: "Đen", label: "Đen" },
+                              { value: "Nâu", label: "Nâu" },
+                              { value: "Trắng", label: "Trắng" },
+                              { value: "Xám", label: "Xám" },
+                            ]}
+                          />
+                        </Form.Item>
+
+                        {/* Giá */}
+                        <Form.Item
+                          name={[name, "price"]}
+                          rules={[
+                            { required: true, message: "Nhập giá" },
+                            {
+                              validator(_, value) {
+                                if (value > 0) return Promise.resolve();
+                                return Promise.reject("Giá phải lớn hơn 0");
+                              },
+                            },
+                          ]}
+                        >
+                          <Input type="number" placeholder="Giá" />
+                        </Form.Item>
+
+                        {/* Số lượng */}
+                        <Form.Item
+                          name={[name, "quantity"]}
+                          rules={[
+                            { required: true, message: "Nhập số lượng" },
+                            {
+                              validator(_, value) {
+                                if (value >= 0) return Promise.resolve();
+                                return Promise.reject("Số lượng ≥ 0");
+                              },
+                            },
+                          ]}
+                        >
+                          <Input type="number" placeholder="Số lượng" />
+                        </Form.Item>
+
+                        {/* Xóa */}
+                        {fields.length > 1 && (
+                          <Button danger onClick={() => remove(name)}>
+                            Xóa
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </Form.List>
+          </div>
 
           {/* Buttons */}
           <div

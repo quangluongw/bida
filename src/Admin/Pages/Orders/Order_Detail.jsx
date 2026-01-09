@@ -13,11 +13,17 @@ const Order_Detail = () => {
   const [idOpen, setIdOpen] = useState("");
   const [status, setStatus] = useState();
   const { handleSubmit } = useForm();
+  const idAdmin = JSON.parse(localStorage.getItem("user"));
   const onSubmitUpdate = () => {
-    mutate({ id: idOpen, data: status });
+    const value = {
+      status,
+      handledBy: idAdmin._id,
+    };
+    mutate({ id: idOpen, data: value });
     if (!isLoadingorder) {
       setIdOpen("");
       setIsOpen(false);
+      setIsOpenOrder(false);
     }
   };
   const handleCancel = () => {
@@ -32,7 +38,7 @@ const Order_Detail = () => {
     setIsOpen(true);
   };
   const handleCancelOrder = (id, status) => {
-    setIdOpen(id.id);
+    setIdOpen(id._id);
     setStatus(status);
     setIsOpenOrder(true);
   };
@@ -158,7 +164,7 @@ const Order_Detail = () => {
                     {data.status == "Xác nhận" && (
                       <div
                         className="px-3 py-1 bg-[#fadbd5] hover:text-white  hover:bg-red-500 cursor-pointer rounded-md btn-sm mt-2 mt-sm-0"
-                        onClick={() => handleCancelOrder(data, 6)}
+                        onClick={() => handleCancelOrder(data, "Hủy")}
                         style={{ color: "white !important" }}
                       >
                         <i className="mdi mdi-archive-remove-outline align-middle me-1" />
@@ -196,11 +202,19 @@ const Order_Detail = () => {
                                 }
                               </span>
                             </h6>
+                            {data?.handledBy&&   <h6 className="fs-15">
+                              Người {data?.status} : {data?.handledBy?.username}
+                            </h6>}
+                          
                             {data?.status === "Hủy" && (
-                              <span className="flex gap-2 text-[14px] items-center">
-                                <h6 className="fs-15">Lý do hủy :</h6>
-                                {data?.cancelReason}
-                              </span>
+                              <div className=" gap-2 text-[14px] items-center">
+                                <h6>Người Hủy : {data?.handledBy?.username}</h6>
+                                <div>
+                                  <h6 className="fs-15">
+                                    Lý do hủy : {data?.cancelReason}
+                                  </h6>
+                                </div>
+                              </div>
                             )}
                           </div>
                         </div>

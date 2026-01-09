@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDetailProduct } from "../../../Hook/useDetailProduct";
-import { Spin } from "antd";
+import { Spin, Table } from "antd";
 import { FormatDate, FormatPrice } from "../../../Format";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Thumbs } from "swiper/modules";
@@ -20,7 +20,32 @@ const Detail = () => {
       </div>
     );
   }
+  const columns = [
+    {
+      title: "Color",
+      dataIndex: "color",
+      key: "color",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+      render: (text) => <FormatPrice price={text} />,
+    },
 
+    {
+      title: "Quantity",
+      key: "quantity",
+      dataIndex: "quantity",
+    },
+  ];
+  const data = detailProduct?.data?.variants.map((item) => ({
+    color: item?.color,
+
+    quantity: item.quantity,
+    price: item.price,
+  }));
+  console.log(detailProduct.data.variants);
   // Lấy danh sách ảnh từ bumImage hoặc fallback về imageUrl
   const images =
     detailProduct?.data?.abumImage && detailProduct.data.abumImage.length > 0
@@ -170,7 +195,7 @@ const Detail = () => {
                       </h4>
                     )}
                   </div>
-
+                  <Table columns={columns} dataSource={data} />
                   {/* Description */}
                   <div className="mt-4 text-muted">
                     <h5 className="fs-14 fw-semibold">Mô tả:</h5>

@@ -1,6 +1,5 @@
 import { message } from "antd";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useNavigate } from "react-router-dom";
 import {
   createVoucher,
   deleteVoucher,
@@ -17,6 +16,7 @@ export const useVouchers = () => {
 
   return { vouchers, isLoading };
 };
+
 export const useVoucherDetail = (id) => {
   const { data: voucher, isLoading } = useQuery({
     queryKey: ["voucher", id],
@@ -29,14 +29,12 @@ export const useVoucherDetail = (id) => {
 
 export const useAddVoucher = () => {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
 
   const { mutate, isLoading } = useMutation({
     mutationFn: (data) => createVoucher(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["vouchers"] });
       message.success("Voucher added successfully");
-      navigate("/vouchers");
     },
     onError: (error) => {
       message.error(error.response.data.message);
@@ -79,5 +77,3 @@ export const useDeleteVoucher = () => {
 
   return { mutate, isLoading };
 };
-
-

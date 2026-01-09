@@ -126,9 +126,7 @@ export const getOrdersAdmin = async ( filters = {}) => {
 };
 
 export const udateStatusOrder = async (id, data) => {
-  const res = await Axios.patch(`order/${id}`, {
-    status: data,
-  });
+  const res = await Axios.patch(`order/${id}`,data);
   return res.data;
 };
 export const detailOrder = async (id) => {

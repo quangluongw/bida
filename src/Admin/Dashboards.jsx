@@ -348,14 +348,6 @@ console.log(mappedData);
                         </td>
                         <td>
                           <h5 className="fs-14 my-1 fw-normal">
-                            {item.quantity}
-                          </h5>
-                          <span className="text-muted">
-                            Số lượng còn lại trong kho
-                          </span>
-                        </td>
-                        <td>
-                          <h5 className="fs-14 my-1 fw-normal">
                             <FormatPrice price={item.total_amount} />
                           </h5>
                           <span className="text-muted">Tổng tiền</span>
