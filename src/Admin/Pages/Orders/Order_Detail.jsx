@@ -99,7 +99,9 @@ const Order_Detail = () => {
                                   {item.name.length > 20
                                     ? item.name.slice(0, 40) + "..."
                                     : item.name}
+                                  
                                 </div>
+                              Màu sắc : {item.color}
                               </h5>
                             </div>
                           </div>

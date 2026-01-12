@@ -67,6 +67,7 @@ const Dashboards = () => {
       product_image: product.image || "https://via.placeholder.com/150",
       variant_name: product.variant || "Mặc định",
       price: product.price,
+      color: product.color,
       total_orders: product.qty,
       quantity: product.stock || 0,
       total_amount: product.price * product.qty,
@@ -82,6 +83,7 @@ const Dashboards = () => {
       user: order.customerName,
       items: order.products.map((p) => ({
         product_name: p.productId?.name || "N/A",
+        color: p.color || "N/A",
       })),
       total_amount: order.totalPrice,
       status: order.status,
@@ -327,7 +329,7 @@ console.log(mappedData);
                                     : item?.product_name}
                                 </Link>
                               </h5>
-
+                              <div>{item.color}</div>
                               <span className="text-muted">
                                 {item.last_order_date}
                               </span>
@@ -376,6 +378,7 @@ console.log(mappedData);
                       <th scope="col">Mã đơn hàng</th>
                       <th scope="col">Người mua</th>
                       <th scope="col">Sản phẩm</th>
+                      <th scope="col">Màu sắc</th>
                       <th scope="col">Giá tiền</th>
                       <th scope="col">Trạng thái</th>
                     </tr>
@@ -401,6 +404,13 @@ console.log(mappedData);
                             {item.items[0]?.product_name?.length > 20
                               ? `${item.items[0].product_name.slice(0, 20)}...`
                               : item.items[0]?.product_name}
+                          </span>
+                        </td>
+                        <td>
+                          <span>
+                            {item.items[0]?.color?.length > 20
+                              ? `${item.items[0].color.slice(0, 20)}...`
+                              : item.items[0]?.color}
                           </span>
                         </td>
                         <td>
