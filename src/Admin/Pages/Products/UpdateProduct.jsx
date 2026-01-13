@@ -44,7 +44,7 @@ const UpdateProduct = () => {
   const onChangeStatus = (checked) => {
     setStatus(checked);
   };
-
+console.log(fileList);
   // Load dữ liệu từ detailProduct vào form
   useEffect(() => {
     if (detailProduct && detailProduct.data) {
@@ -123,17 +123,11 @@ const UpdateProduct = () => {
     }
 
     // Lấy danh sách URL từ fileList
-    const bumImage = fileList
-      .map((file) => file.url || file.response?.secure_url)
-      .filter(Boolean);
-
-    // Ảnh đại diện là ảnh đầu tiên
-    const imageUrl = bumImage[0];
 
     const productData = {
       ...values,
-      bumImage: bumImage,
-      imageUrl: imageUrl,
+      abumImage: fileList.map((item) => item.url),
+      imageUrl: fileList[0].url ,
       status: status,
       updatedBy: idAdmin._id,
     };
